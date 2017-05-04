@@ -111,5 +111,5 @@ QSGNode *PieSlice::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
     m.scale(scale, scale, 1);
     tNode->setMatrix(m);
 
-    return node;
+    return tNode;
 }

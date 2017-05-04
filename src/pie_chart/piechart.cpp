@@ -123,7 +123,7 @@ void PieChart::calculateDataRange()
     double endAngle;
     for(PieSlice* i:slicesList)
     {
-        endAngle = startAngle + i->value()/sumValue*6.28;
+        endAngle = startAngle + i->value()/sumValue*M_PI*2;
         i->setStartAngle(startAngle);
         i->setEndAngle(endAngle);
         startAngle = endAngle;
