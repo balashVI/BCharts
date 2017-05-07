@@ -30,6 +30,8 @@ protected:
     QString pName;
     QColor pColor;
 
+    bool mNeedMaterialUpdate;
+
 signals:
     ///Сигналізує про зміну назви серії
     void nameChanged();

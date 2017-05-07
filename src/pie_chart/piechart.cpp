@@ -84,33 +84,6 @@ PieSlice *PieChart::sliceAt(QQmlListProperty<PieSlice> *slicesList, int index)
     return nullptr;
 }
 
-/*void PieChart::paint(QPainter *painter)
-{
-    painter->setRenderHints(QPainter::Antialiasing, true);
-    //Обчислення області для малювання
-    QRectF fillRect = boundingRect();
-    if(fillRect.height() > fillRect.width()){
-        fillRect.setY(fillRect.y() + (fillRect.height()-fillRect.width())/2);
-        fillRect.setHeight(fillRect.width());
-    } else {
-        fillRect.setX(fillRect.x() + (fillRect.width()-fillRect.height())/2);
-        fillRect.setWidth(fillRect.height());
-    }
-    fillRect.adjust(pStrokePen->width(), pStrokePen->width(), -pStrokePen->width(),
-                    -pStrokePen->width());
-
-    //Малювання сегментів
-    painter->setPen(pStrokePen->getPen());
-    double beginAngle = pAngleOffset;
-    double segmentAngle;
-    for(PieSlice* i:slicesList){
-        painter->setBrush(QBrush(i->color()));
-        segmentAngle = 5760.0 * fabs(i->value())/sumSliceValue;
-        painter->drawPie(fillRect, beginAngle, segmentAngle);
-        beginAngle += segmentAngle;
-    }
-}*/
-
 void PieChart::calculateDataRange()
 {
     double sumValue = 0;

@@ -3,14 +3,18 @@
 BaseSeries::BaseSeries(QQuickItem *parent) :
     QQuickItem(parent),
     pName{"Series"},
-    pColor{"gray"}
+    pColor{"gray"},
+    mNeedMaterialUpdate{true}
 {
 }
 
 void BaseSeries::setColor(const QColor &value)
 {
-    pColor = value;
-    emit colorChanged();
+    if (value != pColor) {
+        pColor = value;
+        mNeedMaterialUpdate = true;
+        emit colorChanged();
+    }
 }
 
 QColor BaseSeries::color() const

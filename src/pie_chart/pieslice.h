@@ -29,8 +29,13 @@ public:
     void setEndAngle(double angle);
 
 private:
+    int vertexCount(QRectF r);
+
+private:
     double pValue;
     double mStartAngle, mEndAngle;
+
+    bool mNeedGeometryUpdate;
 
 signals:
     void valueChanged();

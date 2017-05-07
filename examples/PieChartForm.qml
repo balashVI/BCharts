@@ -3,7 +3,7 @@ import BVI.Charts 1.0
 import QtQuick.Layouts 1.1
 
 Rectangle {
-    color: "white"
+    color: "#454754"
 
     RowLayout{
         anchors.fill: parent
@@ -11,27 +11,37 @@ Rectangle {
             id: pieChart
             Layout.fillHeight: true
             Layout.fillWidth: true
+
             PieSlice{
-                color: "#FF9966"
-                value: 10
+                color: "#9688f7"
+                value: 2
             }
             PieSlice{
-                color: "#66CCFF"
-                value: 20
+                id: pie
+                color: "#57dce5"
+                value: 1.2
             }
             PieSlice{
-                color: "#7A4A8D"
-                value: 15
+                color: "#b659b4"
+                value: 1.5
             }
             PieSlice{
-                color: "#7575A3"
-                value: 25
+                color: "#3bbcfc"
+                value: 3
+            }
+            PieSlice{
+                color: "#6597a2"
+                value: 1
             }
         }
-        //        ChartLegend{
-        //            Layout.fillHeight: true
-        //            source: pieChart
-        //        }
+    }
+
+    MouseArea{
+        anchors.fill: parent
+        onClicked: {
+            pie.value += 5;
+            pie.color = "red";
+        }
     }
 }
 

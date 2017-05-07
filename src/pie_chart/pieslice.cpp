@@ -10,7 +10,8 @@ PieSlice::PieSlice(QQuickItem *parent) :
     BaseSeries(parent),
     pValue{0},
     mStartAngle{0},
-    mEndAngle{3.14/2}
+    mEndAngle{3.14/2},
+    mNeedGeometryUpdate{true}
 {
     setFlag(ItemHasContents, true);
 
@@ -36,8 +37,8 @@ void PieSlice::setValue(double value)
 void PieSlice::setStartAngle(double angle)
 {
     if (angle != mStartAngle) {
-        qDebug() << "start" << angle;
         mStartAngle = angle;
+        mNeedGeometryUpdate = true;
         update();
     }
 }
@@ -45,71 +46,94 @@ void PieSlice::setStartAngle(double angle)
 void PieSlice::setEndAngle(double angle)
 {
     if (angle != mEndAngle) {
-        qDebug() << "end" << angle;
         mEndAngle = angle;
+        mNeedGeometryUpdate = true;
         update();
     }
+}
+
+int PieSlice::vertexCount(QRectF r)
+{
+    double radius = qMin(r.width(), r.height()) / 2;
+
+    double l = 2*M_PI*radius /  ((mEndAngle - mStartAngle) / 2*M_PI);
+    int segmentsCount = ceil(l/5.0); // 1 segment each 5 pixels
+
+    return segmentsCount + 2;
 }
 
 
 QSGNode *PieSlice::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
-    QSGTransformNode *tNode = 0;
+    auto b = boundingRect();
+
+    QSGTransformNode *transformNode = 0;
     QSGGeometryNode *node = 0;
     QSGGeometry *geometry = 0;
 
     if (!oldNode) {
-        tNode = new QSGTransformNode;
-        tNode->setFlag(QSGNode::OwnsGeometry);
-        QMatrix4x4 m;
-        auto b = boundingRect();
-
-        m.translate(b.width()/2,b.height()/2,1);
-        tNode->setMatrix(m);
+        transformNode = new QSGTransformNode;
+        transformNode->setFlag(QSGNode::OwnsGeometry);
 
         node = new QSGGeometryNode;
-        geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), 40);
+        geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), vertexCount(b));
         geometry->setLineWidth(1);
         geometry->setDrawingMode(QSGGeometry::DrawTriangleFan);
         node->setGeometry(geometry);
         node->setFlag(QSGNode::OwnsGeometry);
 
         QSGFlatColorMaterial *material = new QSGFlatColorMaterial;
-        material->setColor(pColor);
         node->setMaterial(material);
         node->setFlag(QSGNode::OwnsMaterial);
 
-        //
-        QSGGeometry::Point2D *vertices = geometry->vertexDataAsPoint2D();
-
-        double r = 1;
-        vertices[0].set(0, 0);
-
-        double step = (mEndAngle - mStartAngle) / 38;
-        for (int i=0;i<39;i++)
-        {
-            double angle = mStartAngle + step*i;
-            double x = r*cos(angle);
-            double y = r*sin(angle);
-            vertices[i+1].set(x, y);
-        }
-
-//        node->markDirty(QSGNode::DirtyGeometry);
-
-        //
-        tNode->appendChildNode(node);
-    } else {
-        tNode = static_cast<QSGTransformNode *>(oldNode);
+        transformNode->appendChildNode(node);
+    }
+    else
+    {
+        transformNode = static_cast<QSGTransformNode *>(oldNode);
+        node = static_cast<QSGGeometryNode *>(transformNode->childAtIndex(0));
+        geometry = node->geometry();
     }
 
-
+    // transform
     QMatrix4x4 m;
-    auto b = boundingRect();
-
     m.translate(b.width()/2,b.height()/2,1);
     double scale = qMin(b.width(), b.height()) / 2;
     m.scale(scale, scale, 1);
-    tNode->setMatrix(m);
+    transformNode->setMatrix(m);
+    transformNode->markDirty(QSGNode::DirtyMatrix);
 
-    return tNode;
+    // update material
+    if (mNeedMaterialUpdate)
+    {
+        QSGFlatColorMaterial *material = static_cast<QSGFlatColorMaterial*>(node->material());
+        material->setColor(pColor);
+
+        transformNode->markDirty(QSGNode::DirtyMaterial);
+    }
+
+    // add points
+    if (mNeedGeometryUpdate)
+    {
+        mNeedGeometryUpdate = false;
+
+        int vCount = vertexCount(b);
+        geometry->allocate(vCount);
+        QSGGeometry::Point2D *vertices = geometry->vertexDataAsPoint2D();
+
+        vertices[0].set(0, 0);
+
+        double step = (mEndAngle - mStartAngle) / (vCount - 2);
+        for (int i=0; i<vCount-1; i++)
+        {
+            double angle = mStartAngle + step*i;
+            double x = cos(angle);
+            double y = sin(angle);
+            vertices[i+1].set(x, y);
+        }
+
+        node->markDirty(QSGNode::DirtyGeometry);
+    }
+
+    return transformNode;
 }
