@@ -36,6 +36,7 @@ private:
     double mStartAngle, mEndAngle;
 
     bool mNeedGeometryUpdate;
+    double mScaleAtLastGUpdate;
 
 signals:
     void valueChanged();

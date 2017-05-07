@@ -11,7 +11,8 @@ PieSlice::PieSlice(QQuickItem *parent) :
     pValue{0},
     mStartAngle{0},
     mEndAngle{3.14/2},
-    mNeedGeometryUpdate{true}
+    mNeedGeometryUpdate{true},
+    mScaleAtLastGUpdate{0}
 {
     setFlag(ItemHasContents, true);
 
@@ -102,6 +103,12 @@ QSGNode *PieSlice::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
     m.scale(scale, scale, 1);
     transformNode->setMatrix(m);
     transformNode->markDirty(QSGNode::DirtyMatrix);
+
+    if (scale < 0.75*mScaleAtLastGUpdate || scale > 1.5*mScaleAtLastGUpdate) {
+        // need to update segments count
+        mScaleAtLastGUpdate = scale;
+        mNeedGeometryUpdate = true;
+    }
 
     // update material
     if (mNeedMaterialUpdate)
