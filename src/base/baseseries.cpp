@@ -1,7 +1,7 @@
 #include "baseseries.h"
 
-BaseSeries::BaseSeries(QQuickItem *parent) :
-    QQuickItem(parent),
+BaseSeries::BaseSeries(QObject *parent) :
+    QObject(parent),
     pName{"Series"},
     pColor{"gray"},
     mNeedMaterialUpdate{true}

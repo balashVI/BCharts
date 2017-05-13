@@ -1,25 +1,21 @@
 #ifndef BASESERIES_H
 #define BASESERIES_H
 
-#include <QQuickItem>
+#include <QObject>
+#include <QSGNode>
+#include <QColor>
 
-///
-/// \brief Базовий клас усіх серій графіків
-///
-/// Містить основні властивості та функціонал властиві усім серіям графіків
-///
-class BaseSeries : public QQuickItem
+class BaseSeries : public QObject
 {
     Q_OBJECT
-public:
-    ///Конструктор класу
-    explicit BaseSeries(QQuickItem *parent = 0);
 
-    ///Назва серії
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-
-    ///Основний колір серії
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+
+public:
+    explicit BaseSeries(QObject *parent = 0);
+
+    virtual QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force = false) = 0;
 
     void setColor(const QColor &value);
     QColor color() const;
@@ -33,10 +29,9 @@ protected:
     bool mNeedMaterialUpdate;
 
 signals:
-    ///Сигналізує про зміну назви серії
     void nameChanged();
-    ///Сигналізую про зміну основного кольору серії
     void colorChanged();
+    void needsUpdate();
 
 public slots:
 

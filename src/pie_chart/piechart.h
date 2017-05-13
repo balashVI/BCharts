@@ -32,14 +32,14 @@ public:
     QQmlListProperty<PieSlice> slices();
     Q_CLASSINFO("DefaultProperty", "slices")
 
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
-
     Q_PROPERTY(double angleOffset READ angleOffset WRITE setAngleOffset NOTIFY angleOffsetChanged)
     double angleOffset() const;
     void setAngleOffset(double value);
 
 
 //    Q_INVOKABLE virtual QVariantList generateLegend() override;
+
+    QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) override;
 
 protected:
     static void appendSlice(QQmlListProperty<PieSlice> *slicesList, PieSlice *slice);

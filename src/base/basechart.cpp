@@ -2,7 +2,8 @@
 #include <QDebug>
 
 BaseChart::BaseChart(QQuickItem *parent) :
-    QQuickItem(parent)
+    QQuickItem(parent),
+    mForceUpdate{false}
 {
     setClip(true);
 }

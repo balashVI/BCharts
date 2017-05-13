@@ -1,9 +1,6 @@
 #ifndef PIESLICE_H
 #define PIESLICE_H
 
-#include <QQuickItem>
-#include <QColor>
-
 #include "../base/baseseries.h"
 
 /**
@@ -14,14 +11,15 @@
 class PieSlice : public BaseSeries
 {
     Q_OBJECT
+
+    Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged)
+
 public:
     ///Конструктор класу
-    explicit PieSlice(QQuickItem *parent = 0);
+    explicit PieSlice(QObject *parent = 0);
 
-    QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
+    QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force = false) override;
 
-    ///Задає числове значення сегмента
-    Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged)
     double value() const;
     void setValue(double value);
 

@@ -33,6 +33,9 @@ signals:
 
 protected slots:
     void emitLegendChanged();
+
+protected:
+    bool mForceUpdate;
 };
 
 #endif // BASECHART_H

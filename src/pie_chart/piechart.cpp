@@ -24,22 +24,7 @@ void PieChart::setAngleOffset(double value)
 {
     pAngleOffset = value;
     emit angleOffsetChanged();
-}
-
-void PieChart::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
-{
-    if (newGeometry == oldGeometry) {
-        return;
-    }
-
-    for (auto s:slicesList) {
-        s->setX(newGeometry.x());
-        s->setY(newGeometry.y());
-        s->setWidth(newGeometry.width());
-        s->setHeight(newGeometry.height());
-    }
-
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+    update();
 }
 
 //QVariantList PieChart::generateLegend()
@@ -59,10 +44,14 @@ void PieChart::appendSlice(QQmlListProperty<PieSlice> *slicesList, PieSlice *sli
 {
     PieChart *chart = qobject_cast<PieChart *>(slicesList->object);
     if (chart) {
-        slice->setParentItem(chart);
+        slice->setParent(chart);
         chart->slicesList.append(slice);
-        connect(slice, SIGNAL(valueChanged()), chart, SLOT(calculateDataRange()));
+
+        connect(slice, &PieSlice::needsUpdate, chart, &PieChart::update);
+        connect(slice, &PieSlice::valueChanged, chart, &PieChart::calculateDataRange);
         chart->calculateDataRange();
+
+        chart->mForceUpdate = true;
 
         emit chart->slicesChanged();
     }
@@ -101,4 +90,56 @@ void PieChart::calculateDataRange()
         i->setEndAngle(endAngle);
         startAngle = endAngle;
     }
+}
+
+QSGNode *PieChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
+{
+    auto b = boundingRect();
+
+    QSGTransformNode *tNode = 0;
+
+    if (!oldNode)
+    {
+        tNode = new QSGTransformNode;
+        tNode->setFlag(QSGNode::OwnsGeometry);
+    }
+    else
+    {
+        tNode = static_cast<QSGTransformNode *>(oldNode);
+    }
+
+    // transform
+    QMatrix4x4 m;
+    m.translate(b.width()/2,b.height()/2,1);
+    double scale = qMin(b.width(), b.height()) / 2;
+    m.scale(scale, scale, 1);
+    tNode->setMatrix(m);
+    tNode->markDirty(QSGNode::DirtyMatrix);
+
+    // delete redundand child nodes
+    int oldChildsCount = tNode->childCount();
+    while (oldChildsCount > slicesList.count())
+    {
+        auto n = tNode->childAtIndex(0);
+        tNode->removeChildNode(n);
+        delete n;
+
+        --oldChildsCount;
+    }
+
+    // update child nodes
+    // TODO: improve iterating
+    for (int i=0; i!=slicesList.length(); ++i)
+    {
+        if (i < oldChildsCount)
+        {
+            slicesList.at(i)->updatePaintNode(tNode->childAtIndex(i), b, mForceUpdate);
+        }
+        else
+        {
+            tNode->appendChildNode(slicesList.at(i)->updatePaintNode(nullptr, b, true));
+        }
+    }
+
+    return tNode;
 }

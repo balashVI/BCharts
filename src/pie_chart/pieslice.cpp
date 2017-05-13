@@ -6,7 +6,7 @@
 
 #include <QDebug>
 
-PieSlice::PieSlice(QQuickItem *parent) :
+PieSlice::PieSlice(QObject *parent) :
     BaseSeries(parent),
     pValue{0},
     mStartAngle{0},
@@ -14,10 +14,6 @@ PieSlice::PieSlice(QQuickItem *parent) :
     mNeedGeometryUpdate{true},
     mScaleAtLastGUpdate{0}
 {
-    setFlag(ItemHasContents, true);
-
-    setAntialiasing(true);
-
     pName = "Slice";
 }
 
@@ -40,7 +36,7 @@ void PieSlice::setStartAngle(double angle)
     if (angle != mStartAngle) {
         mStartAngle = angle;
         mNeedGeometryUpdate = true;
-        update();
+        emit needsUpdate();
     }
 }
 
@@ -49,7 +45,7 @@ void PieSlice::setEndAngle(double angle)
     if (angle != mEndAngle) {
         mEndAngle = angle;
         mNeedGeometryUpdate = true;
-        update();
+        emit needsUpdate();
     }
 }
 
@@ -64,20 +60,24 @@ int PieSlice::vertexCount(QRectF r)
 }
 
 
-QSGNode *PieSlice::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
-{
-    auto b = boundingRect();
 
-    QSGTransformNode *transformNode = 0;
+
+QSGNode *PieSlice::updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force)
+{
+    if (force)
+    {
+        mNeedGeometryUpdate = true;
+        mNeedMaterialUpdate = true;
+    }
+
+
+
     QSGGeometryNode *node = 0;
     QSGGeometry *geometry = 0;
 
     if (!oldNode) {
-        transformNode = new QSGTransformNode;
-        transformNode->setFlag(QSGNode::OwnsGeometry);
-
         node = new QSGGeometryNode;
-        geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), vertexCount(b));
+        geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), vertexCount(boundingRect));
         geometry->setLineWidth(1);
         geometry->setDrawingMode(QSGGeometry::DrawTriangleFan);
         node->setGeometry(geometry);
@@ -86,28 +86,11 @@ QSGNode *PieSlice::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
         QSGFlatColorMaterial *material = new QSGFlatColorMaterial;
         node->setMaterial(material);
         node->setFlag(QSGNode::OwnsMaterial);
-
-        transformNode->appendChildNode(node);
     }
     else
     {
-        transformNode = static_cast<QSGTransformNode *>(oldNode);
-        node = static_cast<QSGGeometryNode *>(transformNode->childAtIndex(0));
+        node = static_cast<QSGGeometryNode *>(oldNode);
         geometry = node->geometry();
-    }
-
-    // transform
-    QMatrix4x4 m;
-    m.translate(b.width()/2,b.height()/2,1);
-    double scale = qMin(b.width(), b.height()) / 2;
-    m.scale(scale, scale, 1);
-    transformNode->setMatrix(m);
-    transformNode->markDirty(QSGNode::DirtyMatrix);
-
-    if (scale < 0.75*mScaleAtLastGUpdate || scale > 1.5*mScaleAtLastGUpdate) {
-        // need to update segments count
-        mScaleAtLastGUpdate = scale;
-        mNeedGeometryUpdate = true;
     }
 
     // update material
@@ -116,15 +99,23 @@ QSGNode *PieSlice::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
         QSGFlatColorMaterial *material = static_cast<QSGFlatColorMaterial*>(node->material());
         material->setColor(pColor);
 
-        transformNode->markDirty(QSGNode::DirtyMaterial);
+        node->markDirty(QSGNode::DirtyMaterial);
     }
 
-    // add points
+    // check if the neumber of segments needs to be updated
+    double scale = qMin(boundingRect.width(), boundingRect.height()) / 2;
+    if (scale < 0.75*mScaleAtLastGUpdate || scale > 1.5*mScaleAtLastGUpdate) {
+
+        mScaleAtLastGUpdate = scale;
+        mNeedGeometryUpdate = true;
+    }
+
+    // update points
     if (mNeedGeometryUpdate)
     {
         mNeedGeometryUpdate = false;
 
-        int vCount = vertexCount(b);
+        int vCount = vertexCount(boundingRect);
         geometry->allocate(vCount);
         QSGGeometry::Point2D *vertices = geometry->vertexDataAsPoint2D();
 
@@ -142,5 +133,5 @@ QSGNode *PieSlice::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
         node->markDirty(QSGNode::DirtyGeometry);
     }
 
-    return transformNode;
+    return node;
 }
