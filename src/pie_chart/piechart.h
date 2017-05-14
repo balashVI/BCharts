@@ -5,9 +5,6 @@
 #include "pieslice.h"
 
 ///
-/// \brief Кругова діаграма
-///
-/// Малює кругову діаграму. Приклад використання:
 /// \code
 /// ...
 /// PieChart{
@@ -25,19 +22,22 @@
 class PieChart : public BaseChart
 {
     Q_OBJECT
+
+    Q_CLASSINFO("DefaultProperty", "slices")
+
+    Q_PROPERTY(QQmlListProperty<PieSlice> slices READ slices NOTIFY slicesChanged())
+    Q_PROPERTY(double angleOffset READ angleOffset WRITE setAngleOffset NOTIFY angleOffsetChanged)
+
 public:
     explicit PieChart(QQuickItem *parent = 0);
 
-    Q_PROPERTY(QQmlListProperty<PieSlice> slices READ slices NOTIFY slicesChanged())
-    QQmlListProperty<PieSlice> slices();
-    Q_CLASSINFO("DefaultProperty", "slices")
 
-    Q_PROPERTY(double angleOffset READ angleOffset WRITE setAngleOffset NOTIFY angleOffsetChanged)
+    QQmlListProperty<PieSlice> slices();
+
     double angleOffset() const;
     void setAngleOffset(double value);
 
-
-//    Q_INVOKABLE virtual QVariantList generateLegend() override;
+    Q_INVOKABLE virtual QVariantList generateLegend() override;
 
     QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) override;
 

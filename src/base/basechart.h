@@ -5,19 +5,13 @@
 #include <QtMath>
 #include <math.h>
 
-/**
- * @brief Базовий клас усіх графіків
- *
- * Містить властивості та фінкції властиві усім графікам
- */
 class BaseChart : public QQuickItem
 {
     Q_OBJECT
 public:
-    ///Конструктор класу
     explicit BaseChart(QQuickItem *parent = 0);
 
-//    virtual QVariantList generateLegend();
+    virtual QVariantList generateLegend() = 0;
 
 protected:
     double calculateOrderOfMagnitude(double x);

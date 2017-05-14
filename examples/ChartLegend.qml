@@ -1,15 +1,23 @@
-import QtQuick 2.3
+import QtQuick 2.5
 
 Item {
     id: root
-    width: 100
+    width: 150
     clip: true
 
     property QtObject source
 
+    Rectangle{
+        anchors.fill: parent
+        color: "white"
+        radius: 5
+        opacity: 0.1
+    }
+
     ListView{
         id: list
         anchors.fill: parent
+        anchors.margins: 5
         spacing: 5
 
         delegate: Item{
@@ -25,7 +33,7 @@ Item {
                 color: modelData.color
                 border.color: modelData.strokeColor ? modelData.strokeColor : ""
                 border.width: modelData.strokeWidth ? modelData.strokeWidth : 0
-                radius: 8
+                radius: 5
             }
 
             Text{
@@ -34,6 +42,8 @@ Item {
                 anchors.left: ico.right
                 anchors.margins: 5
                 renderType: Text.NativeRendering
+                color: "white"
+                font.pointSize: 10
             }
         }
     }

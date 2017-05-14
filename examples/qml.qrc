@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>AllChartsForm.qml</file>
         <file>PieChartForm.qml</file>
+        <file>ChartLegend.qml</file>
     </qresource>
 </RCC>
