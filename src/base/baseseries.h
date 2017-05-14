@@ -17,8 +17,9 @@ public:
 
     virtual QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force = false) = 0;
 
-    void setColor(const QColor &value);
     QColor color() const;
+    void setColor(const QColor &value);
+
     QString name() const;
     void setName(const QString & value);
 

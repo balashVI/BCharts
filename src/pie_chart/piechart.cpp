@@ -142,5 +142,7 @@ QSGNode *PieChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
         }
     }
 
+    mForceUpdate = false;
+
     return tNode;
 }

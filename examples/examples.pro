@@ -8,7 +8,8 @@ SOURCES += main.cpp \
     ../src/base/baseseries.cpp \
     ../src/pie_chart/piechart.cpp \
     ../src/pie_chart/pieslice.cpp \
-    ../src/bcharts_plugin.cpp
+    ../src/bcharts_plugin.cpp \
+    ../src/pie_chart/stroke.cpp
 
 RESOURCES += qml.qrc
 
@@ -39,4 +40,5 @@ HEADERS += \
     ../src/base/baseseries.h \
     ../src/pie_chart/piechart.h \
     ../src/pie_chart/pieslice.h \
-    ../src/bcharts_plugin.h
+    ../src/bcharts_plugin.h \
+    ../src/pie_chart/stroke.h
