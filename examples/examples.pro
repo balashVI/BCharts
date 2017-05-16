@@ -9,7 +9,24 @@ SOURCES += main.cpp \
     ../src/pie_chart/piechart.cpp \
     ../src/pie_chart/pieslice.cpp \
     ../src/bcharts_plugin.cpp \
-    ../src/pie_chart/stroke.cpp
+    ../src/pie_chart/stroke.cpp \
+    ../src/abstractaxis.cpp \
+    ../src/abstractchart.cpp \
+    ../src/abstractseries.cpp \
+    ../src/barchart.cpp \
+    ../src/barseries.cpp \
+    ../src/bubble.cpp \
+    ../src/bubblechart.cpp \
+    ../src/bubbleseries.cpp \
+    ../src/categoryaxis.cpp \
+    ../src/chartpen.cpp \
+    ../src/chartpoint.cpp \
+    ../src/linechart.cpp \
+    ../src/lineseries.cpp \
+    ../src/polarraxis.cpp \
+    ../src/standartaxis.cpp \
+    ../src/xychart.cpp \
+    ../src/xyseries.cpp
 
 RESOURCES += qml.qrc
 
@@ -41,4 +58,21 @@ HEADERS += \
     ../src/pie_chart/piechart.h \
     ../src/pie_chart/pieslice.h \
     ../src/bcharts_plugin.h \
-    ../src/pie_chart/stroke.h
+    ../src/pie_chart/stroke.h \
+    ../src/abstractaxis.h \
+    ../src/abstractchart.h \
+    ../src/abstractseries.h \
+    ../src/barchart.h \
+    ../src/barseries.h \
+    ../src/bubble.h \
+    ../src/bubblechart.h \
+    ../src/bubbleseries.h \
+    ../src/categoryaxis.h \
+    ../src/chartpen.h \
+    ../src/linechart.h \
+    ../src/lineseries.h \
+    ../src/polarraxis.h \
+    ../src/standartaxis.h \
+    ../src/xychart.h \
+    ../src/xyseries.h \
+    ../src/chartpoint.h

@@ -4,5 +4,10 @@
         <file>AllChartsForm.qml</file>
         <file>PieChartForm.qml</file>
         <file>ChartLegend.qml</file>
+        <file>BarChartForm.qml</file>
+        <file>BubbleChartForm.qml</file>
+        <file>LineChartForm.qml</file>
+        <file>PolarAreaChartForm.qml</file>
+        <file>XYChartForm.qml</file>
     </qresource>
 </RCC>
