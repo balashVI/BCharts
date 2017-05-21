@@ -1,14 +1,11 @@
 #include "bubblechart.h"
 
-BubbleChart::BubbleChart(QQuickPaintedItem *parent):
-    XYChart(parent), pMinBubbleRadius{2}, pMaxBubbleRadius{20}
+BubbleChart::BubbleChart(QQuickPaintedItem *parent) : XYChart(parent), pMinBubbleRadius{2}, pMaxBubbleRadius{20}
 {
-
 }
 
 BubbleChart::~BubbleChart()
 {
-
 }
 
 QQmlListProperty<BubbleSeries> BubbleChart::series()
@@ -43,7 +40,8 @@ QVariantList BubbleChart::generateLegend()
 {
     QVariantList list;
     QVariantMap map;
-    for(BubbleSeries *series: seriesList){
+    for (BubbleSeries *series : seriesList)
+    {
         map.clear();
         map.insert("name", series->name());
         map.insert("color", series->color());
@@ -57,7 +55,8 @@ QVariantList BubbleChart::generateLegend()
 void BubbleChart::appendSeries(QQmlListProperty<BubbleSeries> *seriesList, BubbleSeries *series)
 {
     BubbleChart *chart = qobject_cast<BubbleChart *>(seriesList->object);
-    if (chart) {
+    if (chart)
+    {
         series->setParent(chart);
         chart->seriesList.append(series);
         connect(series, SIGNAL(dataChanged()), chart, SLOT(calculateDataRange()));
@@ -69,51 +68,55 @@ void BubbleChart::appendSeries(QQmlListProperty<BubbleSeries> *seriesList, Bubbl
 int BubbleChart::seriesListLength(QQmlListProperty<BubbleSeries> *seriesList)
 {
     BubbleChart *chart = qobject_cast<BubbleChart *>(seriesList->object);
-    if(chart)
+    if (chart)
         return chart->seriesList.length();
-    else return 0;
+    else
+        return 0;
 }
 
 BubbleSeries *BubbleChart::seriesAt(QQmlListProperty<BubbleSeries> *seriesList, int index)
 {
     BubbleChart *series = qobject_cast<BubbleChart *>(seriesList->object);
-    if (series) {
+    if (series)
+    {
         return series->seriesList.at(index);
-    } else return nullptr;
+    }
+    else
+        return nullptr;
 }
 
 void BubbleChart::paint(QPainter *painter)
 {
     painter->setRenderHints(QPainter::Antialiasing, true);
     //Обчислення додаткових параметрів
-    int xAxisLabelsHeight { QFontMetrics(pXAxis.labelsFont()).height() };
-    int yAxisLabelsHeight { QFontMetrics(pYAxis.labelsFont()).height() };
-    int scaleHeight{boundingRect().height()-5-2.0*xAxisLabelsHeight};
-    double yMaxSteps = qFloor(scaleHeight/(yAxisLabelsHeight*0.66));
-    double yMinSteps = qFloor(scaleHeight/yAxisLabelsHeight*0.5);
+    int xAxisLabelsHeight{QFontMetrics(pXAxis.labelsFont()).height()};
+    int yAxisLabelsHeight{QFontMetrics(pYAxis.labelsFont()).height()};
+    int scaleHeight{boundingRect().height() - 5 - 2.0 * xAxisLabelsHeight};
+    double yMaxSteps = qFloor(scaleHeight / (yAxisLabelsHeight * 0.66));
+    double yMinSteps = qFloor(scaleHeight / yAxisLabelsHeight * 0.5);
     int yNumberOfSteps;
     double yStepValue, yGraphMin;
     calculateScale(scaleHeight, yMaxSteps, yMinSteps, yUpperValue, yLoverValue, yNumberOfSteps, yStepValue, yGraphMin);
-    pYAxis.setLabels(populateLabels(yNumberOfSteps+1, yGraphMin, yStepValue));
+    pYAxis.setLabels(populateLabels(yNumberOfSteps + 1, yGraphMin, yStepValue));
 
-    int scaleWidth {boundingRect().width()-10-pYAxis.getWidthOfLongestLabel()};
-    double xMaxSteps = qFloor(scaleWidth/(xAxisLabelsHeight*0.66));
-    double xMinSteps = qFloor(scaleWidth/xAxisLabelsHeight*0.3);
+    int scaleWidth{boundingRect().width() - 10 - pYAxis.getWidthOfLongestLabel()};
+    double xMaxSteps = qFloor(scaleWidth / (xAxisLabelsHeight * 0.66));
+    double xMinSteps = qFloor(scaleWidth / xAxisLabelsHeight * 0.3);
     int xNumberOfSteps;
     double xStepValue, xGraphMin;
 
     calculateScale(scaleWidth, xMaxSteps, xMinSteps, xUpperValue, xLoverValue, xNumberOfSteps, xStepValue, xGraphMin);
-    pXAxis.setLabels(populateLabels(xNumberOfSteps+1, xGraphMin, xStepValue));
+    pXAxis.setLabels(populateLabels(xNumberOfSteps + 1, xGraphMin, xStepValue));
 
-    xMaxSteps = qFloor(scaleWidth/(pXAxis.getWidthOfLongestLabel()*0.66));
-    xMinSteps = qFloor(scaleWidth/pXAxis.getWidthOfLongestLabel()*0.4);
+    xMaxSteps = qFloor(scaleWidth / (pXAxis.getWidthOfLongestLabel() * 0.66));
+    xMinSteps = qFloor(scaleWidth / pXAxis.getWidthOfLongestLabel() * 0.4);
     calculateScale(scaleWidth, xMaxSteps, xMinSteps, xUpperValue, xLoverValue, xNumberOfSteps, xStepValue, xGraphMin);
-    pXAxis.setLabels(populateLabels(xNumberOfSteps+1, xGraphMin, xStepValue));
+    pXAxis.setLabels(populateLabels(xNumberOfSteps + 1, xGraphMin, xStepValue));
 
-    double yAxisPosX {boundingRect().width()-scaleWidth};
-    double xAxisPosY {scaleHeight + xAxisLabelsHeight};
-    double yScaleHop {qFloor(scaleHeight/yNumberOfSteps)};
-    double xScaleHop {qFloor(scaleWidth/xNumberOfSteps)};
+    double yAxisPosX{boundingRect().width() - scaleWidth};
+    double xAxisPosY{scaleHeight + xAxisLabelsHeight};
+    double yScaleHop{qFloor(scaleHeight / yNumberOfSteps)};
+    double xScaleHop{qFloor(scaleWidth / xNumberOfSteps)};
 
     //    //--------------------Малювання осей та сітки-------------------------------
 
@@ -125,18 +128,20 @@ void BubbleChart::paint(QPainter *painter)
 
     //---------------------------------------Малювання графіка------------------------------------
 
-    double valueScale {(pMaxBubbleRadius-pMinBubbleRadius)/(upperValue-loverValue)};
-    double valueShift {pMinBubbleRadius-valueScale*loverValue};
-    for(int i=0;i<seriesList.length();++i){
+    double valueScale{(pMaxBubbleRadius - pMinBubbleRadius) / (upperValue - loverValue)};
+    double valueShift{pMinBubbleRadius - valueScale * loverValue};
+    for (int i = 0; i < seriesList.length(); ++i)
+    {
         painter->setPen(seriesList[i]->strokePen()->getPen());
         painter->setBrush(QBrush(seriesList[i]->color()));
-        for(int j=0;j<seriesList[i]->getDataList()->length();++j){
-            double xValueOffset {calculateOffset(seriesList[i]->getDataList()->at(j)->x(),
+        for (int j = 0; j < seriesList[i]->getDataList()->length(); ++j)
+        {
+            double xValueOffset{calculateOffset(seriesList[i]->getDataList()->at(j)->x(),
                                                 xNumberOfSteps, xStepValue, xGraphMin, xScaleHop)};
-            double yValueOffset {calculateOffset(seriesList[i]->getDataList()->at(j)->y(),
+            double yValueOffset{calculateOffset(seriesList[i]->getDataList()->at(j)->y(),
                                                 yNumberOfSteps, yStepValue, yGraphMin, yScaleHop)};
-            double bubbleRadius {valueScale*seriesList[i]->getDataList()->at(j)->value()+valueShift};
-            painter->drawEllipse(QPoint(yAxisPosX+xValueOffset, xAxisPosY-yValueOffset),
+            double bubbleRadius{valueScale * seriesList[i]->getDataList()->at(j)->value() + valueShift};
+            painter->drawEllipse(QPoint(yAxisPosX + xValueOffset, xAxisPosY - yValueOffset),
                                  bubbleRadius, bubbleRadius);
         }
     }
@@ -152,28 +157,28 @@ void BubbleChart::calculateDataRange()
     loverValue = std::numeric_limits<int>::max();
 
     double xUpper, xLover, yUpper, yLover, upper, lover;
-    for(BubbleSeries *i: seriesList){
+    for (BubbleSeries *i : seriesList)
+    {
         i->getDataRange(xLover, xUpper, yLover, yUpper, lover, upper);
-        if(xUpper>xUpperValue)
+        if (xUpper > xUpperValue)
             xUpperValue = xUpper;
-        if(xLover<xLoverValue)
+        if (xLover < xLoverValue)
             xLoverValue = xLover;
-        if(yUpper>yUpperValue)
+        if (yUpper > yUpperValue)
             yUpperValue = yUpper;
-        if(yLover<yLoverValue)
+        if (yLover < yLoverValue)
             yLoverValue = yLover;
-        if(upper>upperValue)
+        if (upper > upperValue)
             upperValue = upper;
-        if(lover<loverValue)
+        if (lover < loverValue)
             loverValue = lover;
     }
-    double offset {(xUpperValue-xLoverValue)*0.01};
+    double offset{(xUpperValue - xLoverValue) * 0.01};
     xUpperValue += offset;
     xLoverValue -= offset;
-    offset = (yUpperValue-yLoverValue)*0.01;
+    offset = (yUpperValue - yLoverValue) * 0.01;
     yUpperValue += offset;
     yLoverValue -= offset;
-    if(upperValue == loverValue)
+    if (upperValue == loverValue)
         loverValue -= 1;
 }
-

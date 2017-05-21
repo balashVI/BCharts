@@ -2,9 +2,9 @@
 
 #include <qqml.h>
 
-#include "pie_chart/piechart.h"
-#include "pie_chart/pieslice.h"
-#include "pie_chart/stroke.h"
+#include "charts/pie_chart.h"
+#include "series/pie_slice.h"
+#include "tools/stroke.h"
 
 #include "barchart.h"
 #include "barseries.h"

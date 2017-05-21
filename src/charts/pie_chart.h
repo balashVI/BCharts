@@ -1,8 +1,8 @@
-#ifndef PIECHART_H
-#define PIECHART_H
+#ifndef PIE_CHART_H
+#define PIE_CHART_H
 
-#include "../base/basechart.h"
-#include "pieslice.h"
+#include "../series/pie_slice.h"
+#include "base_chart.h"
 
 ///
 /// \code
@@ -60,4 +60,4 @@ public slots:
 
 };
 
-#endif // PIECHART_H
+#endif // PIE_CHART_H

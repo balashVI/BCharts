@@ -1,8 +1,8 @@
-#ifndef PIESLICE_H
-#define PIESLICE_H
+#ifndef PIE_SLICE_H
+#define PIE_SLICE_H
 
-#include "../base/baseseries.h"
-#include "stroke.h"
+#include "../tools/stroke.h"
+#include "base_series.h"
 
 
 class PieSlice : public BaseSeries
@@ -41,4 +41,4 @@ protected:
 
 };
 
-#endif // PIESLICE_H
+#endif // PIE_SLICE_H

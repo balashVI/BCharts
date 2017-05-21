@@ -1,10 +1,10 @@
-#include "pieslice.h"
-
-#include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
+#include <QSGGeometryNode>
+#include <QDebug>
 #include <cmath>
 
-#include <QDebug>
+
+#include "pie_slice.h"
 
 PieSlice::PieSlice(QObject *parent) :
     BaseSeries(parent),

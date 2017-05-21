@@ -1,4 +1,4 @@
-#include "baseseries.h"
+#include "base_series.h"
 
 BaseSeries::BaseSeries(QObject *parent) :
     QObject(parent),

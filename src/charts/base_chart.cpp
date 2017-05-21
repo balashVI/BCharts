@@ -1,5 +1,6 @@
-#include "basechart.h"
 #include <QDebug>
+
+#include "base_chart.h"
 
 BaseChart::BaseChart(QQuickItem *parent) :
     QQuickItem(parent),

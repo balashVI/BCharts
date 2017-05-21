@@ -4,17 +4,16 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    ../src/base/basechart.cpp \
-    ../src/base/baseseries.cpp \
-    ../src/pie_chart/piechart.cpp \
-    ../src/pie_chart/pieslice.cpp \
-    ../src/bcharts_plugin.cpp \
-    ../src/pie_chart/stroke.cpp \
+    ../src/charts/base_chart.cpp \
+    ../src/charts/pie_chart.cpp \
+    ../src/series/pie_slice.cpp \
+    ../src/tools/stroke.cpp \
     ../src/abstractaxis.cpp \
     ../src/abstractchart.cpp \
     ../src/abstractseries.cpp \
     ../src/barchart.cpp \
     ../src/barseries.cpp \
+    ../src/bcharts_plugin.cpp \
     ../src/bubble.cpp \
     ../src/bubblechart.cpp \
     ../src/bubbleseries.cpp \
@@ -26,7 +25,8 @@ SOURCES += main.cpp \
     ../src/polarraxis.cpp \
     ../src/standartaxis.cpp \
     ../src/xychart.cpp \
-    ../src/xyseries.cpp
+    ../src/xyseries.cpp \
+    ../src/series/base_series.cpp
 
 RESOURCES += qml.qrc
 
@@ -53,26 +53,26 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    ../src/base/basechart.h \
-    ../src/base/baseseries.h \
-    ../src/pie_chart/piechart.h \
-    ../src/pie_chart/pieslice.h \
-    ../src/bcharts_plugin.h \
-    ../src/pie_chart/stroke.h \
+    ../src/charts/base_chart.h \
+    ../src/charts/pie_chart.h \
+    ../src/series/pie_slice.h \
+    ../src/tools/stroke.h \
     ../src/abstractaxis.h \
     ../src/abstractchart.h \
     ../src/abstractseries.h \
     ../src/barchart.h \
     ../src/barseries.h \
+    ../src/bcharts_plugin.h \
     ../src/bubble.h \
     ../src/bubblechart.h \
     ../src/bubbleseries.h \
     ../src/categoryaxis.h \
     ../src/chartpen.h \
+    ../src/chartpoint.h \
     ../src/linechart.h \
     ../src/lineseries.h \
     ../src/polarraxis.h \
     ../src/standartaxis.h \
     ../src/xychart.h \
     ../src/xyseries.h \
-    ../src/chartpoint.h
+    ../src/series/base_series.h

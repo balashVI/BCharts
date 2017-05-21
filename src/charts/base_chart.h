@@ -1,5 +1,5 @@
-#ifndef BASECHART_H
-#define BASECHART_H
+#ifndef BASE_CHART_H
+#define BASE_CHART_H
 
 #include <QQuickItem>
 #include <QtMath>
@@ -32,4 +32,4 @@ protected:
     bool mForceUpdate;
 };
 
-#endif // BASECHART_H
+#endif // BASE_CHART_H

@@ -4,7 +4,7 @@
 Stroke::Stroke(QObject *parent)
     : QObject(parent),
       pEnable{false},
-      pWidth{10},
+      pWidth{8},
       pColor{"white"}
 {
 
