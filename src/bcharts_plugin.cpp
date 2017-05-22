@@ -2,8 +2,12 @@
 
 #include <qqml.h>
 
+#include "charts/polar_area_chart.h"
 #include "charts/pie_chart.h"
+
+#include "series/polar_area.h"
 #include "series/pie_slice.h"
+
 #include "tools/stroke.h"
 
 #include "barchart.h"
@@ -25,7 +29,10 @@ void BChartsPlugin::registerTypes(const char *uri)
 {
     // @uri com.balash.bcharts
     qmlRegisterType<PieChart>(uri, 2, 0, "PieChart");
+    qmlRegisterType<PolarAreaChart>(uri, 2, 0, "PolarAreaChart");
+
     qmlRegisterType<PieSlice>(uri, 2, 0, "PieSlice");
+    qmlRegisterType<PolarArea>(uri, 2, 0, "PolarArea");
 
     qmlRegisterUncreatableType<Stroke>(uri, 2, 0,"Stroke", "");
 

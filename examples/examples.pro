@@ -26,7 +26,11 @@ SOURCES += main.cpp \
     ../src/standartaxis.cpp \
     ../src/xychart.cpp \
     ../src/xyseries.cpp \
-    ../src/series/base_series.cpp
+    ../src/series/base_series.cpp \
+    ../src/charts/polar_area_chart.cpp \
+    ../src/series/polar_area.cpp \
+    ../src/axes/base_axis.cpp \
+    ../src/axes/linear_axis.cpp
 
 RESOURCES += qml.qrc
 
@@ -75,4 +79,8 @@ HEADERS += \
     ../src/standartaxis.h \
     ../src/xychart.h \
     ../src/xyseries.h \
-    ../src/series/base_series.h
+    ../src/series/base_series.h \
+    ../src/charts/polar_area_chart.h \
+    ../src/series/polar_area.h \
+    ../src/axes/base_axis.h \
+    ../src/axes/linear_axis.h
