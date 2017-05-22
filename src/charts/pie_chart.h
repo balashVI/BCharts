@@ -1,8 +1,9 @@
 #ifndef PIE_CHART_H
 #define PIE_CHART_H
 
-#include "../series/pie_slice.h"
 #include "base_chart.h"
+
+class PieSlice;
 
 ///
 /// \code

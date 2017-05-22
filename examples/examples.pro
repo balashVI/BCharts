@@ -30,7 +30,9 @@ SOURCES += main.cpp \
     ../src/charts/polar_area_chart.cpp \
     ../src/series/polar_area.cpp \
     ../src/axes/base_axis.cpp \
-    ../src/axes/linear_axis.cpp
+    ../src/axes/linear_axis.cpp \
+    ../src/grids/polar_grid.cpp \
+    ../src/grids/base_grid.cpp
 
 RESOURCES += qml.qrc
 
@@ -83,4 +85,6 @@ HEADERS += \
     ../src/charts/polar_area_chart.h \
     ../src/series/polar_area.h \
     ../src/axes/base_axis.h \
-    ../src/axes/linear_axis.h
+    ../src/axes/linear_axis.h \
+    ../src/grids/polar_grid.h \
+    ../src/grids/base_grid.h

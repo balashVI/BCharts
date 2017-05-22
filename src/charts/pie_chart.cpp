@@ -1,5 +1,8 @@
 #include <QPainter>
 
+#include <QSGNode>
+
+#include "../series/pie_slice.h"
 #include "pie_chart.h"
 
 PieChart::PieChart(QQuickItem *parent) :

@@ -1,9 +1,9 @@
 #ifndef POLAR_GRID_H
 #define POLAR_GRID_H
 
-#include <QObject>
+#include "base_grid.h"
 
-class PolarGrid : public QObject
+class PolarGrid : public BaseGrid
 {
     Q_OBJECT
 public:

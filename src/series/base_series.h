@@ -2,8 +2,9 @@
 #define BASESERIES_H
 
 #include <QObject>
-#include <QSGNode>
 #include <QColor>
+
+class QSGNode;
 
 class BaseSeries : public QObject
 {

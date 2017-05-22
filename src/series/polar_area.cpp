@@ -1,6 +1,7 @@
 #include "../tools/stroke.h"
 
-#include "QSGFlatColorMaterial"
+#include <QSGFlatColorMaterial>
+#include <QSGNode>
 
 #include "../axes/base_axis.h"
 #include "polar_area.h"
@@ -125,7 +126,7 @@ QSGNode *PolarArea::updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool 
         {
             double angle = mStartAngle + step * i;
             Q_ASSERT(mAxis);
-            double r = mAxis->map(value());
+            double r = std::min(0.0, mAxis->map(value()));
             double x = r * cos(angle);
             double y = r * sin(angle);
             vertices[i + 1].set(x, y);

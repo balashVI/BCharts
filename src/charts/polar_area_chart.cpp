@@ -1,5 +1,7 @@
 #include "polar_area_chart.h"
 
+#include <QSGNode>
+
 #include "../series/polar_area.h"
 #include "../axes/linear_axis.h"
 
