@@ -9,9 +9,10 @@ class PolarGrid : public BaseGrid
 public:
     explicit PolarGrid(QObject *parent = 0);
 
-signals:
+    QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force) override;
 
-public slots:
+protected:
+    QSGNode *updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool force);
 };
 
 #endif // POLAR_GRID_H

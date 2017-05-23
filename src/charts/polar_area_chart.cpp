@@ -4,12 +4,15 @@
 
 #include "../series/polar_area.h"
 #include "../axes/linear_axis.h"
+#include "../grids/polar_grid.h"
 
 PolarAreaChart::PolarAreaChart(QQuickItem *parent)
     : BaseChart(parent),
       pAxis{new LinearAxis(this)},
+      mGrid{new PolarGrid(this)},
       pAngleOffset{0}
 {
+    mGrid->setAxis(pAxis);
     setFlag(ItemHasContents, true);
 }
 
@@ -107,7 +110,6 @@ void PolarAreaChart::updateDataRange()
 QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
     auto b = boundingRect();
-
     QSGTransformNode *tNode = 0;
 
     if (!oldNode)
@@ -128,30 +130,41 @@ QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     tNode->setMatrix(m);
     tNode->markDirty(QSGNode::DirtyMatrix);
 
-    // delete redundand child nodes
+    // update grid
     int oldChildsCount = tNode->childCount();
-    while (oldChildsCount > mAreasList.count())
+    if (oldChildsCount == 0)
     {
-        auto n = tNode->childAtIndex(0);
-        tNode->removeChildNode(n);
-        delete n;
-
-        --oldChildsCount;
+        tNode->appendChildNode(mGrid->updatePaintNode(nullptr, b, mForceUpdate));
+    }
+    else
+    {
+        mGrid->updatePaintNode(tNode->childAtIndex(0), b, mForceUpdate);
     }
 
-    // update child nodes
-    // TODO: improve iterating
-    for (int i = 0; i != mAreasList.length(); ++i)
-    {
-        if (i < oldChildsCount)
-        {
-            mAreasList.at(i)->updatePaintNode(tNode->childAtIndex(i), b, mForceUpdate);
-        }
-        else
-        {
-            tNode->appendChildNode(mAreasList.at(i)->updatePaintNode(nullptr, b, true));
-        }
-    }
+    //    // delete redundand child nodes
+
+    //    while (oldChildsCount > mAreasList.count())
+    //    {
+    //        auto n = tNode->childAtIndex(0);
+    //        tNode->removeChildNode(n);
+    //        delete n;
+
+    //        --oldChildsCount;
+    //    }
+
+    //    // update child nodes
+    //    // TODO: improve iterating
+    //    for (int i = 0; i != mAreasList.length(); ++i)
+    //    {
+    //        if (i < oldChildsCount)
+    //        {
+    //            mAreasList.at(i)->updatePaintNode(tNode->childAtIndex(i), b, mForceUpdate);
+    //        }
+    //        else
+    //        {
+    //            tNode->appendChildNode(mAreasList.at(i)->updatePaintNode(nullptr, b, true));
+    //        }
+    //    }
 
     mForceUpdate = false;
 

@@ -32,7 +32,9 @@ SOURCES += main.cpp \
     ../src/axes/base_axis.cpp \
     ../src/axes/linear_axis.cpp \
     ../src/grids/polar_grid.cpp \
-    ../src/grids/base_grid.cpp
+    ../src/grids/base_grid.cpp \
+    ../src/tools/label_configs.cpp \
+    ../src/tools/calc.cpp
 
 RESOURCES += qml.qrc
 
@@ -87,4 +89,6 @@ HEADERS += \
     ../src/axes/base_axis.h \
     ../src/axes/linear_axis.h \
     ../src/grids/polar_grid.h \
-    ../src/grids/base_grid.h
+    ../src/grids/base_grid.h \
+    ../src/tools/label_configs.h \
+    ../src/tools/calc.h

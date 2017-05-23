@@ -10,6 +10,9 @@ public:
     explicit LinearAxis(QObject *parent = 0);
 
     double map(double value) override;
+
+    int gridLinesCount() const override;
+    double gridLinePosition(int i) const override;
 };
 
 #endif // LINEAR_AXIS_H

@@ -4,6 +4,7 @@
 #include "base_chart.h"
 
 class PolarArea;
+class PolarGrid;
 class BaseAxis;
 
 ///
@@ -54,6 +55,7 @@ protected:
 protected:
     QList<PolarArea *> mAreasList;
     BaseAxis *pAxis;
+    PolarGrid *mGrid;
 
 private slots:
     void updateAngles();

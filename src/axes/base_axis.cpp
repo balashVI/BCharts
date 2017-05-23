@@ -1,6 +1,13 @@
 #include "base_axis.h"
 
-BaseAxis::BaseAxis(QObject *parent) : QObject(parent), mMin{0}, mMax{1}
+#include "../tools/label_configs.h"
+
+BaseAxis::BaseAxis(QObject *parent)
+    : QObject(parent),
+      mMin{0},
+      mMax{1},
+      mGridColor{"#000000"},
+      mLabelConfigs(new LabelConfigs(this))
 {
 }
 
@@ -30,4 +37,23 @@ void BaseAxis::setMax(double m)
         mMax = m;
         emit minChanged(mMax);
     }
+}
+
+QColor BaseAxis::gridColor() const
+{
+    return mGridColor;
+}
+
+void BaseAxis::setGridColor(QColor color)
+{
+    if (color != mGridColor)
+    {
+        mGridColor = color;
+        emit gridColorChanged(mGridColor);
+    }
+}
+
+LabelConfigs *BaseAxis::labelConfigs() const
+{
+    return mLabelConfigs;
 }

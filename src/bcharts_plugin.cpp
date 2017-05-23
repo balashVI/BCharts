@@ -8,6 +8,7 @@
 #include "series/polar_area.h"
 #include "series/pie_slice.h"
 
+#include "tools/label_configs.h"
 #include "tools/stroke.h"
 
 #include "barchart.h"
@@ -35,6 +36,7 @@ void BChartsPlugin::registerTypes(const char *uri)
     qmlRegisterType<PolarArea>(uri, 2, 0, "PolarArea");
 
     qmlRegisterUncreatableType<Stroke>(uri, 2, 0,"Stroke", "");
+    qmlRegisterUncreatableType<LabelConfigs>(uri, 2, 0,"LabelConfigs", "");
 
     qmlRegisterType<Bubble>(uri, 1, 0, "Bubble");
     qmlRegisterType<BubbleSeries>(uri, 1, 0, "BubbleSeries");
