@@ -34,7 +34,8 @@ SOURCES += main.cpp \
     ../src/grids/polar_grid.cpp \
     ../src/grids/base_grid.cpp \
     ../src/tools/label_configs.cpp \
-    ../src/tools/calc.cpp
+    ../src/tools/calc.cpp \
+    ../src/nodes/qsg_circle_node.cpp
 
 RESOURCES += qml.qrc
 
@@ -91,4 +92,5 @@ HEADERS += \
     ../src/grids/polar_grid.h \
     ../src/grids/base_grid.h \
     ../src/tools/label_configs.h \
-    ../src/tools/calc.h
+    ../src/tools/calc.h \
+    ../src/nodes/qsg_circle_node.h
