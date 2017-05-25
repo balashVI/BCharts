@@ -3,7 +3,7 @@ import BVI.Charts 2.0
 import QtQuick.Layouts 1.1
 
 Rectangle {
-    color: "#454754"
+    color: "white"
 
     RowLayout{
         anchors.fill: parent

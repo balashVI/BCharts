@@ -35,7 +35,8 @@ SOURCES += main.cpp \
     ../src/grids/base_grid.cpp \
     ../src/tools/label_configs.cpp \
     ../src/tools/calc.cpp \
-    ../src/nodes/qsg_circle_node.cpp
+    ../src/nodes/qsg_circle_node.cpp \
+    ../src/nodes/smoothcolormaterial.cpp
 
 RESOURCES += qml.qrc
 
@@ -93,4 +94,5 @@ HEADERS += \
     ../src/grids/base_grid.h \
     ../src/tools/label_configs.h \
     ../src/tools/calc.h \
-    ../src/nodes/qsg_circle_node.h
+    ../src/nodes/qsg_circle_node.h \
+    ../src/nodes/smoothcolormaterial.h

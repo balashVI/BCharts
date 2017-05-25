@@ -18,6 +18,6 @@ int LinearAxis::gridLinesCount() const
 
 double LinearAxis::gridLinePosition(int i) const
 {
-    double lines[3]{0.3, 0.6, 0.9};
+    double lines[3]{0.3,0.6, 0.9};
     return lines[i];
 }

@@ -45,41 +45,25 @@ QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool 
         childsCount--;
     }
 
-    for (int i = 0; i != linesCount; ++i)
+    for (int i = 0; i < linesCount; ++i)
     {
         double radius = mAxis->gridLinePosition(i);
         int vertexCount = Calc::vertexContInCircleSegment(scaleFactor * radius, 0, M_PI * 2);
 
         QSGCircleNode *circleNode = 0;
 
-        // init base node
-        if (i >= childsCount)
-        {
-            circleNode = new QSGCircleNode(radius, vertexCount, mAxis->gridColor());
-            node->appendChildNode(circleNode);
-        }
-        else
+        if (i < childsCount)
         {
             circleNode = static_cast<QSGCircleNode *>(node->childAtIndex(i));
             circleNode->setRadius(radius);
             circleNode->setSegmentsCount(vertexCount);
             circleNode->setColor(mAxis->gridColor());
         }
-
-        // check if the number of segments needs to be updated
-        //    double scale = qMin(boundingRect.width(), boundingRect.height()) / 2;
-        //    if (scale < 0.75 * mScaleAtLastGUpdate || scale > 1.5 * mScaleAtLastGUpdate)
-        //    {
-
-        //        mScaleAtLastGUpdate = scale;
-        //        mNeedGeometryUpdate = true;
-        //    }
-
-        // update points
-        //        if (mNeedGeometryUpdate)
-        //        {
-        //            mNeedGeometryUpdate = false;
+        else
+        {
+            circleNode = new QSGCircleNode(radius, vertexCount, mAxis->gridColor());
+            node->appendChildNode(circleNode);
+        }
     }
-
     return node;
 }
