@@ -4,7 +4,7 @@
 
 #include "smoothcolormaterial.h"
 
-const QSGGeometry::AttributeSet &smoothAttributeSet()
+static const QSGGeometry::AttributeSet &smoothAttributeSet()
 {
     static QSGGeometry::Attribute data[] = {
         QSGGeometry::Attribute::create(0, 2, GL_FLOAT, true),
@@ -13,7 +13,6 @@ const QSGGeometry::AttributeSet &smoothAttributeSet()
     static QSGGeometry::AttributeSet attrs = {3, sizeof(SmoothVertex), data};
     return attrs;
 }
-#include <QDebug>
 
 QSGCircleNode::QSGCircleNode(double radius, int lineWidth, int segmentsCount, QColor color, double scaleFactor)
     : mGeometry(new QSGGeometry(smoothAttributeSet(), 0, 0, QSGGeometry::UnsignedIntType)),
@@ -32,7 +31,6 @@ QSGCircleNode::QSGCircleNode(double radius, int lineWidth, int segmentsCount, QC
     setFlag(QSGNode::OwnsMaterial);
 
     updateGeometry();
-    qDebug() << color;
 }
 
 void QSGCircleNode::setRadius(double r)
@@ -90,12 +88,11 @@ void QSGCircleNode::updateGeometry()
 
     Color4ub fillColor = colorToColor4ub(mColor);
     Color4ub transparent = {0, 0, 0, 0};
+    double lineWidth = mScaleFactor * mLineWidth;
 
     double step = 2 * M_PI / mSegmentsCount;
     for (int i = 0; i < mSegmentsCount; ++i)
     {
-        double lineWidth = mScaleFactor * mLineWidth;
-
         double angle = step * i;
         double c = cos(angle);
         double s = sin(angle);
@@ -105,8 +102,8 @@ void QSGCircleNode::updateGeometry()
         double x2 = (mRadius - lineWidth) * c;
         double y2 = (mRadius - lineWidth) * s;
 
-        double dx = x ;
-        double dy = y ;
+        double dx = 0.2*lineWidth*x/mRadius ;
+        double dy = 0.2*lineWidth*y/mRadius ;
 
         smoothVertices[4 * i].set(x, y, transparent, dx, dy);
         smoothVertices[4 * i + 1].set(x, y, fillColor, -dx, -dy);

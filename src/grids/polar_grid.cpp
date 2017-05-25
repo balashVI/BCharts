@@ -16,7 +16,7 @@ QSGNode *PolarGrid::updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool 
 {
     QSGNode *node = oldNode ? oldNode : new QSGNode;
 
-    if (node->childCount() >= 1)
+    if (node->childCount() != 0)
     {
         updateGridLines(node->childAtIndex(0), boundingRect, force);
     }

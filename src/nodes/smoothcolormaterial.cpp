@@ -28,8 +28,8 @@ QSGMaterialShader *QSGSmoothColorMaterial::createShader() const
 QSGSmoothColorMaterialShader::QSGSmoothColorMaterialShader()
     : QSGMaterialShader()
 {
-    setShaderSourceFile(QOpenGLShader::Vertex, QStringLiteral(":/shaders/smoothcolor.vert"));
-    setShaderSourceFile(QOpenGLShader::Fragment, QStringLiteral(":/shaders/smoothcolor.frag"));
+//    setShaderSourceFile(QOpenGLShader::Vertex, QStringLiteral(":/shaders/smoothcolor.vert"));
+//    setShaderSourceFile(QOpenGLShader::Fragment, QStringLiteral(":/shaders/smoothcolor.frag"));
 }
 
 void QSGSmoothColorMaterialShader::updateState(const QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
