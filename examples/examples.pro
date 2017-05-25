@@ -36,7 +36,8 @@ SOURCES += main.cpp \
     ../src/tools/label_configs.cpp \
     ../src/tools/calc.cpp \
     ../src/nodes/qsg_circle_node.cpp \
-    ../src/nodes/smoothcolormaterial.cpp
+    ../src/nodes/qsg_smooth_color_material.cpp \
+    ../src/nodes/qsg_smooth_color_material_shader.cpp
 
 RESOURCES += qml.qrc
 
@@ -95,4 +96,5 @@ HEADERS += \
     ../src/tools/label_configs.h \
     ../src/tools/calc.h \
     ../src/nodes/qsg_circle_node.h \
-    ../src/nodes/smoothcolormaterial.h
+    ../src/nodes/qsg_smooth_color_material.h \
+    ../src/nodes/qsg_smooth_color_material_shader.h

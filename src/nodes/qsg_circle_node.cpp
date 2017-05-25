@@ -2,26 +2,11 @@
 
 #include <QSGGeometry>
 
-#include "smoothcolormaterial.h"
+#include "qsg_smooth_color_material.h"
 
-static const QSGGeometry::AttributeSet &smoothAttributeSet()
-{
-    static QSGGeometry::Attribute data[] = {
-        QSGGeometry::Attribute::create(0, 2, GL_FLOAT, true),
-        QSGGeometry::Attribute::create(1, 4, GL_UNSIGNED_BYTE, false),
-        QSGGeometry::Attribute::create(2, 2, GL_FLOAT, false)};
-    static QSGGeometry::AttributeSet attrs = {3, sizeof(SmoothVertex), data};
-    return attrs;
-}
-
-QSGCircleNode::QSGCircleNode(double radius, int lineWidth, int segmentsCount, QColor color, double scaleFactor)
-    : mGeometry(new QSGGeometry(smoothAttributeSet(), 0, 0, QSGGeometry::UnsignedIntType)),
-      mMaterial(new QSGSmoothColorMaterial),
-      mColor(color),
-      mSegmentsCount(segmentsCount),
-      mRadius(radius),
-      mScaleFactor(scaleFactor),
-      mLineWidth(lineWidth)
+QSGCircleNode::QSGCircleNode()
+    : mGeometry(new QSGGeometry(QSGSmoothColorMaterial::attributeSet(), 0, 0, QSGGeometry::UnsignedIntType)),
+      mMaterial(new QSGSmoothColorMaterial)
 {
     mGeometry->setDrawingMode(GL_TRIANGLE_STRIP);
     setGeometry(mGeometry);
@@ -29,109 +14,84 @@ QSGCircleNode::QSGCircleNode(double radius, int lineWidth, int segmentsCount, QC
 
     setMaterial(mMaterial);
     setFlag(QSGNode::OwnsMaterial);
-
-    updateGeometry();
 }
 
-void QSGCircleNode::setRadius(double r)
+void QSGCircleNode::update(float radius, int lineWidth, int segmentsCount, QColor color, float scaleFactor, bool antialiasing)
 {
-    if (r != mRadius)
+    int verticesCount = 2 * segmentsCount;
+    int indexesCount = 2 * segmentsCount + 2;
+    if (antialiasing)
     {
-        mRadius = r;
-        updateGeometry();
+        verticesCount *= 2;
+        indexesCount *= 3;
     }
-}
+    mGeometry->allocate(verticesCount, indexesCount);
 
-void QSGCircleNode::setLineWidth(int w)
-{
-    if (w != mLineWidth)
-    {
-        mLineWidth = w;
-        updateGeometry();
-    }
-}
+    Color4ub fillColor = colorToColor4ub(color);
+    Color4ub transparent = {0, 0, 0, 0};
+    float lw = scaleFactor * lineWidth;
 
-void QSGCircleNode::setSegmentsCount(int count)
-{
-    if (count != mSegmentsCount)
-    {
-        mSegmentsCount = count;
-        updateGeometry();
-    }
-}
+    float innerRadius = radius - 0.5f * lw;
+    float outerRadius = radius + 0.5f * lw;
+    float angleStep = 2.0f * M_PI / segmentsCount;
 
-void QSGCircleNode::setColor(QColor color)
-{
-    if (color != mColor)
-    {
-        mColor = color;
-        updateGeometry();
-    }
-}
-
-void QSGCircleNode::setScaleFactor(double scale)
-{
-    if (scale != mScaleFactor)
-    {
-        mScaleFactor = scale;
-        updateGeometry();
-    }
-}
-
-void QSGCircleNode::updateGeometry()
-{
-    mGeometry->allocate(mSegmentsCount * 4, mSegmentsCount * 6 + 6);
+    int verticesShift = antialiasing ? 4 : 2;
 
     SmoothVertex *smoothVertices = reinterpret_cast<SmoothVertex *>(mGeometry->vertexData());
-
-    //    float delta = lineWidth * 0.5f;
-
-    Color4ub fillColor = colorToColor4ub(mColor);
-    Color4ub transparent = {0, 0, 0, 0};
-    double lineWidth = mScaleFactor * mLineWidth;
-
-    double step = 2 * M_PI / mSegmentsCount;
-    for (int i = 0; i < mSegmentsCount; ++i)
+    for (int i = 0; i < segmentsCount; ++i)
     {
-        double angle = step * i;
-        double c = cos(angle);
-        double s = sin(angle);
+        float angle = angleStep * i;
+        float c = cos(angle);
+        float s = sin(angle);
 
-        double x = mRadius * c;
-        double y = mRadius * s;
-        double x2 = (mRadius - lineWidth) * c;
-        double y2 = (mRadius - lineWidth) * s;
+        float outerX = outerRadius * c;
+        float outerY = outerRadius * s;
+        float innerX = innerRadius * c;
+        float innerY = innerRadius * s;
 
-        double dx = 0.2*lineWidth*x/mRadius ;
-        double dy = 0.2*lineWidth*y/mRadius ;
+        float dx = antialiasing ? (0.3 * lw * outerX / radius) : 0;
+        float dy = antialiasing ? (0.3 * lw * outerY / radius) : 0;
 
-        smoothVertices[4 * i].set(x, y, transparent, dx, dy);
-        smoothVertices[4 * i + 1].set(x, y, fillColor, -dx, -dy);
+        smoothVertices[verticesShift * i + 0].set(outerX, outerY, fillColor, -dx, -dy); // outer point
+        smoothVertices[verticesShift * i + 1].set(innerX, innerY, fillColor, dx, dy);   // inner point
 
-        smoothVertices[4 * i + 2].set(x2, y2, fillColor, dx, dy);
-        smoothVertices[4 * i + 3].set(x2, y2, transparent, -dx, -dy);
+        if (antialiasing)
+        {
+            smoothVertices[verticesShift * i + 2].set(outerX, outerY, transparent, dx, dy);   // outer transparent point
+            smoothVertices[verticesShift * i + 3].set(innerX, innerY, transparent, -dx, -dy); // inner transparent point
+        }
     }
 
     uint *indexes = mGeometry->indexDataAsUInt();
-
-    for (int i = 0; i < mSegmentsCount; ++i)
+    for (int i = 0; i < segmentsCount; ++i)
     {
-        indexes[2 * i] = 4 * i;
-        indexes[2 * i + 1] = 4 * i + 1;
+        // filled triangles
+        indexes[2 * i + 0] = verticesShift * i + 0;
+        indexes[2 * i + 1] = verticesShift * i + 1;
 
-        indexes[2 * mSegmentsCount + 2 + 2 * i] = 4 * i + 1;
-        indexes[2 * mSegmentsCount + 2 + 2 * i + 1] = 4 * i + 2;
+        // outer fade triangles
+        indexes[2 * segmentsCount + 2 + 2 * i] = verticesShift * i + 2;
+        indexes[2 * segmentsCount + 2 + 2 * i + 1] = verticesShift * i + 0;
 
-        indexes[4 * mSegmentsCount + 4 + 2 * i] = 4 * i + 2;
-        indexes[4 * mSegmentsCount + 4 + 2 * i + 1] = 4 * i + 3;
+        // inner fade triangles
+        indexes[4 * segmentsCount + 4 + 2 * i] = verticesShift * i + 1;
+        indexes[4 * segmentsCount + 4 + 2 * i + 1] = verticesShift * i + 3;
     }
 
-    indexes[2 * mSegmentsCount] = 0;
-    indexes[2 * mSegmentsCount + 1] = 1;
-    indexes[4 * mSegmentsCount + 2] = 1;
-    indexes[4 * mSegmentsCount + 3] = 2;
-    indexes[6 * mSegmentsCount + 4] = 2;
-    indexes[6 * mSegmentsCount + 5] = 3;
+    // close last filled triangles
+    indexes[2 * segmentsCount] = 0;
+    indexes[2 * segmentsCount + 1] = 1;
+
+    if (antialiasing)
+    {
+        // close last outer fade trienagles
+        indexes[4 * segmentsCount + 2] = 2;
+        indexes[4 * segmentsCount + 3] = 0;
+
+        // close last inner fade trienagles
+        indexes[6 * segmentsCount + 4] = 1;
+        indexes[6 * segmentsCount + 5] = 3;
+    }
 
     markDirty(QSGNode::DirtyGeometry);
 }

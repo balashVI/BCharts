@@ -55,16 +55,14 @@ QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool 
         if (i < childsCount)
         {
             circleNode = static_cast<QSGCircleNode *>(node->childAtIndex(i));
-            circleNode->setRadius(radius);
-            circleNode->setSegmentsCount(vertexCount);
-            circleNode->setColor(mAxis->gridColor());
-            circleNode->setScaleFactor(scaleFactor);
         }
         else
         {
-            circleNode = new QSGCircleNode(radius, 2, vertexCount, mAxis->gridColor(), scaleFactor);
+            circleNode = new QSGCircleNode();
             node->appendChildNode(circleNode);
         }
+
+        circleNode->update(radius, 2, vertexCount, mAxis->gridColor(), scaleFactor, true);
     }
     return node;
 }
