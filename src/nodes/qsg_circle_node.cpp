@@ -69,13 +69,16 @@ void QSGCircleNode::update(float radius, int lineWidth, int segmentsCount, QColo
         indexes[2 * i + 0] = verticesShift * i + 0;
         indexes[2 * i + 1] = verticesShift * i + 1;
 
-        // outer fade triangles
-        indexes[2 * segmentsCount + 2 + 2 * i] = verticesShift * i + 2;
-        indexes[2 * segmentsCount + 2 + 2 * i + 1] = verticesShift * i + 0;
+        if (antialiasing)
+        {
+            // outer fade triangles
+            indexes[2 * segmentsCount + 2 + 2 * i] = verticesShift * i + 2;
+            indexes[2 * segmentsCount + 2 + 2 * i + 1] = verticesShift * i + 0;
 
-        // inner fade triangles
-        indexes[4 * segmentsCount + 4 + 2 * i] = verticesShift * i + 1;
-        indexes[4 * segmentsCount + 4 + 2 * i + 1] = verticesShift * i + 3;
+            // inner fade triangles
+            indexes[4 * segmentsCount + 4 + 2 * i] = verticesShift * i + 1;
+            indexes[4 * segmentsCount + 4 + 2 * i + 1] = verticesShift * i + 3;
+        }
     }
 
     // close last filled triangles
