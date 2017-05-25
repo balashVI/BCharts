@@ -2,10 +2,10 @@
 #define QSG_CIRCLE_NODE_H
 
 #include <QSGGeometryNode>
-#include <QSGGeometry>
 #include <QColor>
 
-#include "smoothcolormaterial.h"
+class QSGSmoothColorMaterial;
+class QSGGeometry;
 
 struct Color4ub
 {
@@ -39,21 +39,25 @@ struct SmoothVertex
 class QSGCircleNode : public QSGGeometryNode
 {
 public:
-    QSGCircleNode(double radius, int segmentsCount, QColor color);
+    QSGCircleNode(double radius, int lineWidth, int segmentsCount, QColor color, double scaleFactor);
 
     void setRadius(double r);
+    void setLineWidth(int w);
     void setSegmentsCount(int count);
     void setColor(QColor color);
+    void setScaleFactor(double scale);
 
 private:
     void updateGeometry();
 
 private:
-    QSGGeometry mGeometry;
-    QSGSmoothColorMaterial mMaterial;
+    QSGGeometry *mGeometry;
+    QSGSmoothColorMaterial *mMaterial;
     QColor mColor;
     int mSegmentsCount;
     double mRadius;
+    int mLineWidth;
+    double mScaleFactor;
 };
 
 #endif // QSG_CIRCLE_NODE_H
