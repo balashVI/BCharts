@@ -31,7 +31,7 @@ QSGNode *PolarGrid::updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool 
 
 QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool force)
 {
-    double scaleFactor = 1.0/(std::min(boundingRect.height(), boundingRect.width()) * 0.5);
+    float scaleFactor = std::min(boundingRect.height(), boundingRect.width()) * 0.5;
     int linesCount = mAxis->gridLinesCount();
 
     QSGNode *node = oldNode ? oldNode : new QSGNode;
@@ -46,10 +46,11 @@ QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool 
         childsCount--;
     }
 
+    QPointF center = boundingRect.center();
     for (int i = 0; i < linesCount; ++i)
     {
-        double radius = mAxis->gridLinePosition(i);
-        int vertexCount = Calc::vertexContInCircleSegment(radius/scaleFactor, 0, M_PI * 2);
+        double radius = mAxis->gridLinePosition(i) * scaleFactor;
+        int vertexCount = Calc::vertexContInCircleSegment(radius, 0, M_PI * 2);
 
         QSGCircleNode *circleNode = 0;
 
@@ -63,7 +64,7 @@ QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool 
             node->appendChildNode(circleNode);
         }
 
-        circleNode->update(radius, 2, vertexCount, mAxis->gridColor(), scaleFactor, true);
+        circleNode->update(center, radius, 2, vertexCount, mAxis->gridColor(), true);
     }
     return node;
 }

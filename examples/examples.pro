@@ -98,3 +98,14 @@ HEADERS += \
     ../src/nodes/qsg_circle_node.h \
     ../src/nodes/qsg_smooth_color_material.h \
     ../src/nodes/qsg_smooth_color_material_shader.h
+
+DISTFILES += \
+    AllChartsForm.qml \
+    BarChartForm.qml \
+    BubbleChartForm.qml \
+    ChartLegend.qml \
+    LineChartForm.qml \
+    main.qml \
+    PieChartForm.qml \
+    PolarAreaChartForm.qml \
+    XYChartForm.qml

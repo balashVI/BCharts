@@ -110,35 +110,26 @@ void PolarAreaChart::updateDataRange()
 QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
     auto b = boundingRect();
-    QSGTransformNode *tNode = 0;
 
+    QSGNode *node = 0;
     if (!oldNode)
     {
-        tNode = new QSGTransformNode;
-        tNode->setFlag(QSGNode::OwnsGeometry);
+        node = new QSGTransformNode;
     }
     else
     {
-        tNode = static_cast<QSGTransformNode *>(oldNode);
+        node = static_cast<QSGTransformNode *>(oldNode);
     }
-
-    // transform
-    QMatrix4x4 m;
-    m.translate(b.width() / 2, b.height() / 2, 1);
-    double scale = qMin(b.width(), b.height()) / 2;
-    m.scale(scale, scale, 1);
-    tNode->setMatrix(m);
-    tNode->markDirty(QSGNode::DirtyMatrix);
 
     // update grid
-    int oldChildsCount = tNode->childCount();
+    int oldChildsCount = node->childCount();
     if (oldChildsCount == 0)
     {
-        tNode->appendChildNode(mGrid->updatePaintNode(nullptr, b, mForceUpdate));
+        node->appendChildNode(mGrid->updatePaintNode(nullptr, b, mForceUpdate));
     }
     else
     {
-        mGrid->updatePaintNode(tNode->childAtIndex(0), b, mForceUpdate);
+        mGrid->updatePaintNode(node->childAtIndex(0), b, mForceUpdate);
     }
 
     //    // delete redundand child nodes
@@ -168,5 +159,5 @@ QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
 
     mForceUpdate = false;
 
-    return tNode;
+    return node;
 }

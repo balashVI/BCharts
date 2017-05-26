@@ -12,7 +12,7 @@ class QSGCircleNode : public QSGGeometryNode
 public:
     QSGCircleNode();
 
-    void update(float radius, int lineWidth, int segmentsCount, QColor color, float scaleFactor, bool antialiasing);
+    void update(QPointF center, float radius, int lineWidth, int segmentsCount, QColor color, bool antialiasing);
 
 private:
     QSGGeometry *mGeometry;

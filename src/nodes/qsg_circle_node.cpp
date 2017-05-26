@@ -17,7 +17,7 @@ QSGCircleNode::QSGCircleNode()
     setFlag(QSGNode::OwnsMaterial);
 }
 
-void QSGCircleNode::update(float radius, int lineWidth, int segmentsCount, QColor color, float scaleFactor, bool antialiasing)
+void QSGCircleNode::update(QPointF center, float radius, int lineWidth, int segmentsCount, QColor color, bool antialiasing)
 {
     int verticesCount = 2 * segmentsCount;
     int indexesCount = 2 * segmentsCount + 2;
@@ -30,10 +30,9 @@ void QSGCircleNode::update(float radius, int lineWidth, int segmentsCount, QColo
 
     Color4ub fillColor = colorToColor4ub(color);
     Color4ub transparent = {0, 0, 0, 0};
-    float lw = scaleFactor * lineWidth;
 
-    float innerRadius = radius - 0.5f * lw;
-    float outerRadius = radius + 0.5f * lw;
+    float innerRadius = radius - 0.5f * lineWidth;
+    float outerRadius = radius + 0.5f * lineWidth;
     float angleStep = 2.0f * M_PI / segmentsCount;
 
     int verticesShift = antialiasing ? 4 : 2;
@@ -45,13 +44,13 @@ void QSGCircleNode::update(float radius, int lineWidth, int segmentsCount, QColo
         float c = cos(angle);
         float s = sin(angle);
 
-        float outerX = outerRadius * c;
-        float outerY = outerRadius * s;
-        float innerX = innerRadius * c;
-        float innerY = innerRadius * s;
+        float outerX = center.x() + outerRadius * c;
+        float outerY = center.y() + outerRadius * s;
+        float innerX = center.x() + innerRadius * c;
+        float innerY = center.y() + innerRadius * s;
 
-        float dx = antialiasing ? (0.3 * lw * outerX / radius) : 0;
-        float dy = antialiasing ? (0.3 * lw * outerY / radius) : 0;
+        float dx = antialiasing ? (0.4f * lineWidth * (outerX - center.x()) / outerRadius) : 0;
+        float dy = antialiasing ? (0.4f * lineWidth * (outerY - center.y()) / outerRadius) : 0;
 
         smoothVertices[verticesShift * i + 0].set(outerX, outerY, fillColor, -dx, -dy); // outer point
         smoothVertices[verticesShift * i + 1].set(innerX, innerY, fillColor, dx, dy);   // inner point
@@ -73,17 +72,17 @@ void QSGCircleNode::update(float radius, int lineWidth, int segmentsCount, QColo
         if (antialiasing)
         {
             // outer fade triangles
-            indexes[2 * segmentsCount + 2 + 2 * i] = verticesShift * i + 2;
+            indexes[2 * segmentsCount + 2 + 2 * i + 0] = verticesShift * i + 2;
             indexes[2 * segmentsCount + 2 + 2 * i + 1] = verticesShift * i + 0;
 
             // inner fade triangles
-            indexes[4 * segmentsCount + 4 + 2 * i] = verticesShift * i + 1;
+            indexes[4 * segmentsCount + 4 + 2 * i + 0] = verticesShift * i + 1;
             indexes[4 * segmentsCount + 4 + 2 * i + 1] = verticesShift * i + 3;
         }
     }
 
     // close last filled triangles
-    indexes[2 * segmentsCount] = 0;
+    indexes[2 * segmentsCount + 0] = 0;
     indexes[2 * segmentsCount + 1] = 1;
 
     if (antialiasing)
