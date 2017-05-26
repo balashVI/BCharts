@@ -1,6 +1,7 @@
 #include "qsg_circle_node.h"
 
 #include <QSGGeometry>
+#include <cmath>
 
 #include "qsg_smooth_color_material.h"
 

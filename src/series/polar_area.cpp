@@ -2,6 +2,7 @@
 
 #include <QSGFlatColorMaterial>
 #include <QSGNode>
+#include <cmath>
 
 #include "../axes/base_axis.h"
 #include "polar_area.h"

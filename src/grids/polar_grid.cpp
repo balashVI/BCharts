@@ -2,6 +2,7 @@
 
 #include <QSGFlatColorMaterial>
 #include <QSGNode>
+#include <cmath>
 
 #include "../nodes/qsg_circle_node.h"
 #include "../tools/label_configs.h"
