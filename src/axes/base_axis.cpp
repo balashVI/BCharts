@@ -6,7 +6,7 @@ BaseAxis::BaseAxis(QObject *parent)
     : QObject(parent),
       mMin{0},
       mMax{1},
-      mGridColor{"#444444"},
+      mGridColor{QColor(200,200,200,180)},
       mLabelConfigs(new LabelConfigs(this))
 {
 }

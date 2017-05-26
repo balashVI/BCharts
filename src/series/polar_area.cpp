@@ -12,19 +12,14 @@ PolarArea::PolarArea(QObject *parent)
       pValue{0},
       pStroke{new Stroke(this)},
       mStartAngle{0},
-      mEndAngle{3.14 / 2},
-      mNeedGeometryUpdate{true},
-      mScaleAtLastGUpdate{0}
+      mEndAngle{3.14 / 2}
 {
 }
 
-QSGNode *PolarArea::updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force)
+QSGNode *PolarArea::updatePaintNode(QSGNode *oldNode, QRectF boundingRect)
 {
-    if (force)
-    {
-        mNeedGeometryUpdate = true;
-        mNeedMaterialUpdate = true;
-    }
+    auto center = boundingRect.center();
+    float scaleFactor = std::min(boundingRect.height(), boundingRect.width()) * 0.5f;
 
     QSGGeometryNode *node = 0;
     QSGGeometry *geometry = 0;
@@ -87,66 +82,49 @@ QSGNode *PolarArea::updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool 
     }
 
     // update material
-    if (mNeedMaterialUpdate)
+    auto *material = static_cast<QSGFlatColorMaterial *>(node->material());
+    material->setColor(pColor);
+    node->markDirty(QSGNode::DirtyMaterial);
+
+    // update stroke material
+    if (stroke()->enable())
     {
-        auto *material = static_cast<QSGFlatColorMaterial *>(node->material());
-        material->setColor(pColor);
+        auto *material = static_cast<QSGFlatColorMaterial *>(sNode->material());
+        material->setColor(stroke()->color());
         node->markDirty(QSGNode::DirtyMaterial);
-
-        // update stroke material
-        if (stroke()->enable())
-        {
-            auto *material = static_cast<QSGFlatColorMaterial *>(sNode->material());
-            material->setColor(stroke()->color());
-            node->markDirty(QSGNode::DirtyMaterial);
-        }
-    }
-
-    // check if the neumber of segments needs to be updated
-    double scale = qMin(boundingRect.width(), boundingRect.height()) / 2;
-    if (scale < 0.75 * mScaleAtLastGUpdate || scale > 1.5 * mScaleAtLastGUpdate)
-    {
-
-        mScaleAtLastGUpdate = scale;
-        mNeedGeometryUpdate = true;
     }
 
     // update points
-    if (mNeedGeometryUpdate)
+    int vCount = vertexCount(boundingRect);
+    geometry->allocate(vCount);
+    QSGGeometry::Point2D *vertices = geometry->vertexDataAsPoint2D();
+
+    vertices[0].set(center.x(), center.y());
+
+    double step = (mEndAngle - mStartAngle) / (vCount - 2);
+    for (int i = 0; i < vCount - 1; ++i)
     {
-        mNeedGeometryUpdate = false;
+        double angle = mStartAngle + step * i;
+        Q_ASSERT(mAxis);
+        double r = std::max(0.0, mAxis->map(value()) * scaleFactor);
+        double x = center.x() + r * cos(angle);
+        double y = center.y() + r * sin(angle);
+        vertices[i + 1].set(x, y);
+    }
 
-        int vCount = vertexCount(boundingRect);
-        geometry->allocate(vCount);
-        QSGGeometry::Point2D *vertices = geometry->vertexDataAsPoint2D();
+    node->markDirty(QSGNode::DirtyGeometry);
 
-        vertices[0].set(0, 0);
-
-        double step = (mEndAngle - mStartAngle) / (vCount - 2);
-        for (int i = 0; i < vCount - 1; ++i)
+    // update stroke node
+    if (stroke()->enable())
+    {
+        sGeometry->setLineWidth(stroke()->width());
+        sGeometry->allocate(vCount);
+        auto sVertices = sGeometry->vertexDataAsPoint2D();
+        for (int i = 0; i != vCount; ++i)
         {
-            double angle = mStartAngle + step * i;
-            Q_ASSERT(mAxis);
-            double r = std::min(0.0, mAxis->map(value()));
-            double x = r * cos(angle);
-            double y = r * sin(angle);
-            vertices[i + 1].set(x, y);
+            sVertices[i] = vertices[i];
         }
-
-        node->markDirty(QSGNode::DirtyGeometry);
-
-        // update stroke node
-        if (stroke()->enable())
-        {
-            sGeometry->setLineWidth(stroke()->width());
-            sGeometry->allocate(vCount);
-            auto sVertices = sGeometry->vertexDataAsPoint2D();
-            for (int i = 0; i != vCount; ++i)
-            {
-                sVertices[i] = vertices[i];
-            }
-            sNode->markDirty(QSGNode::DirtyGeometry);
-        }
+        sNode->markDirty(QSGNode::DirtyGeometry);
     }
 
     return node;
@@ -171,7 +149,6 @@ void PolarArea::setStartAngle(double angle)
     if (angle != mStartAngle)
     {
         mStartAngle = angle;
-        mNeedGeometryUpdate = true;
         emit needsUpdate();
     }
 }
@@ -181,7 +158,6 @@ void PolarArea::setEndAngle(double angle)
     if (angle != mEndAngle)
     {
         mEndAngle = angle;
-        mNeedGeometryUpdate = true;
         emit needsUpdate();
     }
 }

@@ -15,7 +15,7 @@ class PieSlice : public BaseSeries
 public:
     explicit PieSlice(QObject *parent = 0);
 
-    QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force = false) override;
+    QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect) override;
 
     double value() const;
     void setValue(double value);

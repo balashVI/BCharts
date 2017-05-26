@@ -132,30 +132,29 @@ QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
         mGrid->updatePaintNode(node->childAtIndex(0), b, mForceUpdate);
     }
 
-    //    // delete redundand child nodes
+    // delete redundand child nodes
+    while (oldChildsCount >= mAreasList.count())
+    {
+        auto n = node->childAtIndex(1);
+        node->removeChildNode(n);
+        delete n;
 
-    //    while (oldChildsCount > mAreasList.count())
-    //    {
-    //        auto n = tNode->childAtIndex(0);
-    //        tNode->removeChildNode(n);
-    //        delete n;
+        --oldChildsCount;
+    }
 
-    //        --oldChildsCount;
-    //    }
-
-    //    // update child nodes
-    //    // TODO: improve iterating
-    //    for (int i = 0; i != mAreasList.length(); ++i)
-    //    {
-    //        if (i < oldChildsCount)
-    //        {
-    //            mAreasList.at(i)->updatePaintNode(tNode->childAtIndex(i), b, mForceUpdate);
-    //        }
-    //        else
-    //        {
-    //            tNode->appendChildNode(mAreasList.at(i)->updatePaintNode(nullptr, b, true));
-    //        }
-    //    }
+    // update polar areas
+    // TODO: improve iterating
+    for (int i = 0; i != mAreasList.length(); ++i)
+    {
+        if (i + 1 < oldChildsCount)
+        {
+            mAreasList.at(i)->updatePaintNode(node->childAtIndex(i + 1), b);
+        }
+        else
+        {
+            node->appendChildNode(mAreasList.at(i)->updatePaintNode(nullptr, b));
+        }
+    }
 
     mForceUpdate = false;
 

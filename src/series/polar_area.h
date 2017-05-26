@@ -16,7 +16,7 @@ class PolarArea : public BaseSeries
 public:
     explicit PolarArea(QObject *parent = 0);
 
-    QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force = false) override;
+    QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect) override;
 
     double value() const;
     void setValue(double value);
@@ -35,9 +35,6 @@ protected:
     double pValue;
     Stroke *pStroke;
     double mStartAngle, mEndAngle;
-
-    bool mNeedGeometryUpdate;
-    double mScaleAtLastGUpdate;
 
     BaseAxis *mAxis;
 
