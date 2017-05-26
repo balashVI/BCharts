@@ -5,6 +5,7 @@
 #include <QColor>
 
 class LabelConfigs;
+class GridConfigs;
 
 class BaseAxis : public QObject
 {
@@ -12,8 +13,8 @@ class BaseAxis : public QObject
 
     Q_PROPERTY(double min READ min WRITE setMin NOTIFY minChanged)
     Q_PROPERTY(double max READ max WRITE setMax NOTIFY maxChanged)
-    Q_PROPERTY(QColor gridColor READ gridColor WRITE setGridColor NOTIFY gridColorChanged)
     Q_PROPERTY(LabelConfigs *labels READ labelConfigs)
+    Q_PROPERTY(GridConfigs* grid READ gridConfigs)
 public:
     explicit BaseAxis(QObject *parent = 0);
 
@@ -27,16 +28,18 @@ public:
     double max() const;
     void setMax(double m);
 
-    QColor gridColor() const;
-    void setGridColor(QColor color);
-
     LabelConfigs *labelConfigs() const;
+    GridConfigs *gridConfigs() const;
+
+    void setSize(double size);
 
 protected:
     double mMin;
     double mMax;
-    QColor mGridColor;
     LabelConfigs *mLabelConfigs;
+    GridConfigs *mGridConfigs;
+
+    double mSize;
 
 signals:
     void minChanged(double min);

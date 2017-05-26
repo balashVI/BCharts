@@ -8,7 +8,7 @@ LinearAxis::LinearAxis(QObject *parent)
 double LinearAxis::map(double value)
 {
     double maxMin = mMax - mMin;
-    return maxMin ? (value - mMin) / maxMin : 0;
+    return maxMin ? mSize * (value - mMin) / maxMin : 0;
 }
 
 int LinearAxis::gridLinesCount() const
@@ -18,6 +18,6 @@ int LinearAxis::gridLinesCount() const
 
 double LinearAxis::gridLinePosition(int i) const
 {
-    double lines[3]{0.3,0.6, 0.9};
-    return lines[i];
+    double lines[3]{0.3, 0.6, 0.9};
+    return lines[i]*mSize;
 }

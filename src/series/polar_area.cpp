@@ -19,7 +19,6 @@ PolarArea::PolarArea(QObject *parent)
 QSGNode *PolarArea::updatePaintNode(QSGNode *oldNode, QRectF boundingRect)
 {
     auto center = boundingRect.center();
-    float scaleFactor = std::min(boundingRect.height(), boundingRect.width()) * 0.5f;
 
     QSGGeometryNode *node = 0;
     QSGGeometry *geometry = 0;
@@ -106,7 +105,7 @@ QSGNode *PolarArea::updatePaintNode(QSGNode *oldNode, QRectF boundingRect)
     {
         double angle = mStartAngle + step * i;
         Q_ASSERT(mAxis);
-        double r = std::max(0.0, mAxis->map(value()) * scaleFactor);
+        double r = std::max(0.0, mAxis->map(value()));
         double x = center.x() + r * cos(angle);
         double y = center.y() + r * sin(angle);
         vertices[i + 1].set(x, y);

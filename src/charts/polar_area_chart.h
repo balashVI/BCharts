@@ -12,12 +12,11 @@ class BaseAxis;
 /// ...
 /// PolarAreaChart{
 ///     anchors.fill: parent
-///     areas: [
-///         PolarArea{
-///         },
-///         PolarArea{
-///         }
-///     ]
+///
+///     PolarArea{
+///     }
+///     PolarArea{
+///     }
 /// }
 /// ...
 /// \endcode
@@ -30,6 +29,7 @@ class PolarAreaChart : public BaseChart
 
     Q_PROPERTY(QQmlListProperty<PolarArea> areas READ areas NOTIFY areasChanged())
     Q_PROPERTY(double angleOffset READ angleOffset WRITE setAngleOffset NOTIFY angleOffsetChanged)
+    Q_PROPERTY(BaseAxis *axis READ axis)
 
 public:
     explicit PolarAreaChart(QQuickItem *parent = 0);
@@ -42,6 +42,8 @@ public:
     Q_INVOKABLE virtual QVariantList generateLegend() override;
 
     QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) override;
+
+    BaseAxis *axis() const;
 
 signals:
     void areasChanged();

@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     ../src/tools/calc.cpp \
     ../src/nodes/qsg_circle_node.cpp \
     ../src/nodes/qsg_smooth_color_material.cpp \
-    ../src/nodes/qsg_smooth_color_material_shader.cpp
+    ../src/nodes/qsg_smooth_color_material_shader.cpp \
+    ../src/tools/grid_configs.cpp
 
 RESOURCES += qml.qrc
 
@@ -97,7 +98,8 @@ HEADERS += \
     ../src/tools/calc.h \
     ../src/nodes/qsg_circle_node.h \
     ../src/nodes/qsg_smooth_color_material.h \
-    ../src/nodes/qsg_smooth_color_material_shader.h
+    ../src/nodes/qsg_smooth_color_material_shader.h \
+    ../src/tools/grid_configs.h
 
 DISTFILES += \
     AllChartsForm.qml \

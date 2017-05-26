@@ -110,6 +110,7 @@ void PolarAreaChart::updateDataRange()
 QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
     auto b = boundingRect();
+    pAxis->setSize(std::min(b.width(), b.height()) * 0.5);
 
     QSGNode *node = 0;
     if (!oldNode)
@@ -159,4 +160,9 @@ QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     mForceUpdate = false;
 
     return node;
+}
+
+BaseAxis *PolarAreaChart::axis() const
+{
+    return pAxis;
 }
