@@ -53,5 +53,15 @@ GridConfigs *BaseAxis::gridConfigs() const
 
 void BaseAxis::setSize(double size)
 {
-    mSize = size;
+    size -=1;
+
+    if (gridConfigs()->visible()){
+        size -= gridConfigs()->lineWidth()*0.5;
+    }
+
+    if (size != mSize)
+    {
+        mSize = size;
+        updateGridParams();
+    }
 }

@@ -15,27 +15,27 @@ Rectangle {
             PolarArea{
                 name: "First"
                 color: "#9688f7"
-                value: 2
+                value: 1
             }
             PolarArea{
                 name: "Second"
                 color: "#57dce5"
-                value: 1.2
+                value: 2
             }
             PolarArea{
                 name: "Third"
                 color: "#b659b4"
-                value: 1.5
+                value: 3
             }
             PolarArea{
                 name: "Fourth"
                 color: "#3bbcfc"
-                value: 3
+                value: 4
             }
             PolarArea{
                 name: "Fifth"
                 color: "#6597a2"
-                value: 1
+                value: 5
             }
         }
         ChartLegend{

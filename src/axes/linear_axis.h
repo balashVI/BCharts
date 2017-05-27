@@ -9,10 +9,19 @@ class LinearAxis : public BaseAxis
 public:
     explicit LinearAxis(QObject *parent = 0);
 
-    double map(double value) override;
+    double map(double value) const override;
 
     int gridLinesCount() const override;
     double gridLinePosition(int i) const override;
+
+protected:
+    void updateGridParams() override;
+
+private:
+    int mGridLinesCount;
+    double mGridLinesStep;
+    double mMinVisible;
+    double mMaxVisible;
 };
 
 #endif // LINEAR_AXIS_H

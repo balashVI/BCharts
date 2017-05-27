@@ -18,7 +18,7 @@ class BaseAxis : public QObject
 public:
     explicit BaseAxis(QObject *parent = 0);
 
-    virtual double map(double value) = 0;
+    virtual double map(double value) const = 0;
     virtual int gridLinesCount() const = 0;
     virtual double gridLinePosition(int i) const = 0;
 
@@ -33,6 +33,14 @@ public:
 
     void setSize(double size);
 
+signals:
+    void minChanged(double min);
+    void maxChanged(double max);
+    void gridColorChanged(QColor color);
+
+protected:
+    virtual void updateGridParams()=0;
+
 protected:
     double mMin;
     double mMax;
@@ -41,12 +49,6 @@ protected:
 
     double mSize;
 
-signals:
-    void minChanged(double min);
-    void maxChanged(double max);
-    void gridColorChanged(QColor color);
-
-public slots:
 };
 
 #endif // BASE_AXIS_H
