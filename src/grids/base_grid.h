@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+class TextLayout;
 class BaseAxis;
 class QSGNode;
 
@@ -10,7 +11,7 @@ class BaseGrid : public QObject
 {
     Q_OBJECT
 public:
-    explicit BaseGrid(QObject *parent = 0);
+    explicit BaseGrid(BaseAxis *axis, TextLayout *textLayer, QObject *parent = 0);
 
     virtual QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force = false) = 0;
 
@@ -18,6 +19,7 @@ public:
 
 protected:
     BaseAxis *mAxis;
+    TextLayout *mTextLayer;
 
 };
 

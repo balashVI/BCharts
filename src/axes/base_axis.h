@@ -14,13 +14,14 @@ class BaseAxis : public QObject
     Q_PROPERTY(double min READ min WRITE setMin NOTIFY minChanged)
     Q_PROPERTY(double max READ max WRITE setMax NOTIFY maxChanged)
     Q_PROPERTY(LabelConfigs *labels READ labelConfigs)
-    Q_PROPERTY(GridConfigs* grid READ gridConfigs)
+    Q_PROPERTY(GridConfigs *grid READ gridConfigs)
 public:
     explicit BaseAxis(QObject *parent = 0);
 
     virtual double map(double value) const = 0;
     virtual int gridLinesCount() const = 0;
     virtual double gridLinePosition(int i) const = 0;
+    QString gridLabel(int i) const;
 
     double min() const;
     void setMin(double m);
@@ -39,7 +40,8 @@ signals:
     void gridColorChanged(QColor color);
 
 protected:
-    virtual void updateGridParams()=0;
+    virtual void updateGridParams() = 0;
+    virtual void populateLabels() = 0;
 
 protected:
     double mMin;
@@ -48,7 +50,7 @@ protected:
     GridConfigs *mGridConfigs;
 
     double mSize;
-
+    QList<QString> mLabels;
 };
 
 #endif // BASE_AXIS_H

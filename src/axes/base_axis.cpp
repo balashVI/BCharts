@@ -13,6 +13,12 @@ BaseAxis::BaseAxis(QObject *parent)
 {
 }
 
+QString BaseAxis::gridLabel(int i) const
+{
+    i = std::min(mLabels.length() - 1, i);
+    return mLabels.at(i);
+}
+
 double BaseAxis::min() const
 {
     return mMin;
@@ -53,10 +59,11 @@ GridConfigs *BaseAxis::gridConfigs() const
 
 void BaseAxis::setSize(double size)
 {
-    size -=1;
+    size -= 1;
 
-    if (gridConfigs()->visible()){
-        size -= gridConfigs()->lineWidth()*0.5;
+    if (gridConfigs()->visible())
+    {
+        size -= gridConfigs()->lineWidth() * 0.5;
     }
 
     if (size != mSize)

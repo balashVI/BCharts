@@ -5,31 +5,38 @@
 #include "../series/polar_area.h"
 #include "../axes/linear_axis.h"
 #include "../grids/polar_grid.h"
+#include "../tools/textlayout.h"
 
 PolarAreaChart::PolarAreaChart(QQuickItem *parent)
     : BaseChart(parent),
-      pAxis{new LinearAxis(this)},
-      mGrid{new PolarGrid(this)},
-      pAngleOffset{0}
+      mAxis{new LinearAxis(this)},
+      mTextLayout{new TextLayout(this)},
+      mGrid{new PolarGrid(mAxis, mTextLayout, this)},
+      mAngleOffset{0}
 {
-    mGrid->setAxis(pAxis);
+    mGrid->setAxis(mAxis);
     setFlag(ItemHasContents, true);
+
+    mTextLayout->setHeight(500);
+    mTextLayout->setWidth(500);
 }
 
 QQmlListProperty<PolarArea> PolarAreaChart::areas()
 {
-    return QQmlListProperty<PolarArea>(this, 0, &PolarAreaChart::appendArea, &PolarAreaChart::areasListLength,
+    return QQmlListProperty<PolarArea>(this, 0,
+                                       &PolarAreaChart::appendArea,
+                                       &PolarAreaChart::areasListLength,
                                        &PolarAreaChart::areaAt, 0);
 }
 
 double PolarAreaChart::angleOffset() const
 {
-    return pAngleOffset;
+    return mAngleOffset;
 }
 
 void PolarAreaChart::setAngleOffset(double value)
 {
-    pAngleOffset = value;
+    mAngleOffset = value;
     emit angleOffsetChanged();
     update();
 }
@@ -54,7 +61,7 @@ void PolarAreaChart::appendArea(QQmlListProperty<PolarArea> *areasList, PolarAre
     if (chart)
     {
         area->setParent(chart);
-        area->setAxis(chart->pAxis);
+        area->setAxis(chart->mAxis);
         chart->mAreasList.append(area);
 
         connect(area, &PolarArea::needsUpdate, chart, &PolarAreaChart::update);
@@ -104,13 +111,13 @@ void PolarAreaChart::updateDataRange()
         }
     }
 
-    pAxis->setMax(max);
+    mAxis->setMax(max);
 }
 
 QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
     auto b = boundingRect();
-    pAxis->setSize(std::min(b.width(), b.height()) * 0.5);
+    mAxis->setSize(std::min(b.width(), b.height()) * 0.5);
 
     QSGNode *node = 0;
     if (!oldNode)
@@ -164,5 +171,5 @@ QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
 
 BaseAxis *PolarAreaChart::axis() const
 {
-    return pAxis;
+    return mAxis;
 }

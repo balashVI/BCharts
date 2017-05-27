@@ -7,7 +7,7 @@ class PolarGrid : public BaseGrid
 {
     Q_OBJECT
 public:
-    explicit PolarGrid(QObject *parent = 0);
+    explicit PolarGrid(BaseAxis *axis, TextLayout *textLayer, QObject *parent = 0);
 
     QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force) override;
 

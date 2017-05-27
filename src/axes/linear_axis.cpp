@@ -56,6 +56,29 @@ void LinearAxis::updateGridParams()
     mMinVisible = floor(mMin / valueStep) * valueStep;
     mMaxVisible = mMinVisible + valueStep * numberOfSteps;
 
-    mGridLinesCount = numberOfSteps;
-    mGridLinesStep = map(valueStep);
+    if (mGridLinesCount != numberOfSteps || mGridLinesValueStep != valueStep)
+    {
+        mGridLinesCount = numberOfSteps;
+        mGridLinesValueStep = valueStep;
+        mGridLinesStep = map(valueStep);
+
+        populateLabels();
+    }
+}
+
+void LinearAxis::populateLabels()
+{
+    mLabels.clear();
+
+    int numberOfDecimalPlaces = 0;
+    double intpart;
+    if (modf(mGridLinesValueStep, &intpart) != 0)
+    {
+        numberOfDecimalPlaces = QString::number(mGridLinesValueStep).split('.')[1].length();
+    }
+
+    for (int i = 0; i < mGridLinesCount; ++i)
+    {
+        mLabels.push_back(QString::number(mMinVisible + mGridLinesValueStep * i, 'f', numberOfDecimalPlaces));
+    }
 }

@@ -3,6 +3,7 @@
 
 #include "base_chart.h"
 
+class TextLayout;
 class PolarArea;
 class PolarGrid;
 class BaseAxis;
@@ -54,17 +55,17 @@ protected:
     static int areasListLength(QQmlListProperty<PolarArea> *areasList);
     static PolarArea *areaAt(QQmlListProperty<PolarArea> *areasList, int index);
 
-protected:
-    QList<PolarArea *> mAreasList;
-    BaseAxis *pAxis;
-    PolarGrid *mGrid;
-
 private slots:
     void updateAngles();
     void updateDataRange();
 
 private:
-    double pAngleOffset;
+    QList<PolarArea *> mAreasList;
+    BaseAxis *mAxis;
+    TextLayout *mTextLayout;
+    PolarGrid *mGrid;
+    double mAngleOffset;
+
 };
 
 #endif // POLAR_AREA_CHART_H

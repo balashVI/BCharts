@@ -7,10 +7,12 @@
 #include "../nodes/qsg_circle_node.h"
 #include "../tools/label_configs.h"
 #include "../tools/grid_configs.h"
+#include "../tools/textlayout.h"
 #include "../axes/base_axis.h"
 #include "../tools/calc.h"
 
-PolarGrid::PolarGrid(QObject *parent) : BaseGrid(parent)
+PolarGrid::PolarGrid(BaseAxis *axis, TextLayout *textLayer, QObject *parent)
+    : BaseGrid(axis, textLayer, parent)
 {
 }
 
@@ -32,6 +34,7 @@ QSGNode *PolarGrid::updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool 
 
 QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool force)
 {
+    mTextLayer->clear();
     int linesCount = mAxis->gridLinesCount();
 
     QSGNode *node = oldNode ? oldNode : new QSGNode;
@@ -65,6 +68,9 @@ QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool 
         }
 
         circleNode->update(center, radius, mAxis->gridConfigs()->lineWidth(), vertexCount, mAxis->gridConfigs()->color(), true);
+
+        // update labels
+        mTextLayer->add(mAxis->gridLabel(i), center + QPointF(0, -radius));
     }
     return node;
 }

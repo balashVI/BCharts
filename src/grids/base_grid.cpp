@@ -1,13 +1,13 @@
 #include "base_grid.h"
 
-BaseGrid::BaseGrid(QObject *parent) : QObject(parent)
+BaseGrid::BaseGrid(BaseAxis *axis, TextLayout *textLayer, QObject *parent)
+    : QObject(parent),
+      mAxis{axis},
+      mTextLayer{textLayer}
 {
 }
 
 void BaseGrid::setAxis(BaseAxis *axis)
 {
-    if (axis != mAxis)
-    {
-        mAxis = axis;
-    }
+    mAxis = axis;
 }

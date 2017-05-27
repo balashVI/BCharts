@@ -16,10 +16,12 @@ public:
 
 protected:
     void updateGridParams() override;
+    void populateLabels() override;
 
 private:
     int mGridLinesCount;
     double mGridLinesStep;
+    double mGridLinesValueStep;
     double mMinVisible;
     double mMaxVisible;
 };
