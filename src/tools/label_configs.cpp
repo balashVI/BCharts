@@ -1,5 +1,7 @@
 #include "label_configs.h"
 
+#include <QFontMetrics>
+
 LabelConfigs::LabelConfigs(QObject *parent)
     : QObject(parent),
       pVisible{true},
@@ -7,6 +9,9 @@ LabelConfigs::LabelConfigs(QObject *parent)
       pDrawBackground{true}
 {
     pFont.setPointSize(9);
+
+    QFontMetrics metrics(pFont);
+    mHeight = metrics.height();
 }
 
 bool LabelConfigs::visible() const
@@ -33,6 +38,10 @@ void LabelConfigs::setFont(QFont f)
     if (f != pFont)
     {
         pFont = f;
+
+        QFontMetrics metrics(pFont);
+        mHeight = metrics.height();
+
         emit fontChanged(pFont);
     }
 }
@@ -63,4 +72,9 @@ void LabelConfigs::setDrawBackground(bool draw)
         pDrawBackground = draw;
         emit drawBackgroundChanged(pDrawBackground);
     }
+}
+
+double LabelConfigs::height() const
+{
+    return mHeight;
 }

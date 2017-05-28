@@ -28,6 +28,8 @@ public:
     bool drawBackground() const;
     void setDrawBackground(bool draw);
 
+    double height() const;
+
 signals:
     void visibleChanged(bool visible);
     void fontChanged(QFont font);
@@ -39,6 +41,8 @@ private:
     QFont pFont;
     QColor pColor;
     bool pDrawBackground;
+
+    double mHeight;
 };
 
 #endif // LABEL_CONFIGS_H

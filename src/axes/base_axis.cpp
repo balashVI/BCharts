@@ -61,10 +61,18 @@ void BaseAxis::setSize(double size)
 {
     size -= 1;
 
+    double gridLineWidth = 0;
     if (gridConfigs()->visible())
     {
-        size -= gridConfigs()->lineWidth() * 0.5;
+        gridLineWidth = gridConfigs()->lineWidth();
     }
+
+    double labelHeight = 0;
+    if (labelConfigs()->visible()){
+        labelHeight = labelConfigs()->height();
+    }
+
+    size -= std::max(gridLineWidth, labelHeight)*0.5;
 
     if (size != mSize)
     {

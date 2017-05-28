@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "../tools/label_configs.h"
 #include "../tools/calc.h"
 
 LinearAxis::LinearAxis(QObject *parent)
@@ -25,10 +26,9 @@ double LinearAxis::gridLinePosition(int i) const
     return map(mGridLinesValueStep * (i + 1));
 }
 
-#include <QDebug>
 void LinearAxis::updateGridParams()
 {
-    double labelHeight = 20; // TODO: get from font conf
+    double labelHeight = labelConfigs()->height();
     double maxSteps = floor(mSize / (labelHeight * 0.66));
     double minSteps = floor(mSize / labelHeight * 0.5);
 
@@ -64,7 +64,6 @@ void LinearAxis::updateGridParams()
 
         populateLabels();
     }
-    qDebug() << mGridLinesCount;
 }
 
 void LinearAxis::populateLabels()
