@@ -20,7 +20,6 @@ protected:
 
 private:
     int mGridLinesCount;
-    double mGridLinesStep;
     double mGridLinesValueStep;
     double mMinVisible;
     double mMaxVisible;

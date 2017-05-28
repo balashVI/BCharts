@@ -7,7 +7,7 @@
 #include "../nodes/qsg_circle_node.h"
 #include "../tools/label_configs.h"
 #include "../tools/grid_configs.h"
-#include "../tools/textlayout.h"
+#include "../tools/text_layout.h"
 #include "../axes/base_axis.h"
 #include "../tools/calc.h"
 
@@ -70,7 +70,10 @@ QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool 
         circleNode->update(center, radius, mAxis->gridConfigs()->lineWidth(), vertexCount, mAxis->gridConfigs()->color(), true);
 
         // update labels
-        mTextLayer->add(mAxis->gridLabel(i), center + QPointF(0, -radius));
+        if (mAxis->labelConfigs()->visible())
+        {
+            mTextLayer->add(mAxis->gridLabel(i), center + QPointF(0, -radius));
+        }
     }
     return node;
 }

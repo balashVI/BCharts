@@ -2,10 +2,11 @@
 
 #include <QSGNode>
 
+#include "../tools/label_configs.h"
+#include "../tools/text_layout.h"
 #include "../series/polar_area.h"
 #include "../axes/linear_axis.h"
 #include "../grids/polar_grid.h"
-#include "../tools/textlayout.h"
 
 PolarAreaChart::PolarAreaChart(QQuickItem *parent)
     : BaseChart(parent),
@@ -17,8 +18,10 @@ PolarAreaChart::PolarAreaChart(QQuickItem *parent)
     mGrid->setAxis(mAxis);
     setFlag(ItemHasContents, true);
 
-    mTextLayout->setHeight(500);
-    mTextLayout->setWidth(500);
+    mTextLayout->setFont(mAxis->labelConfigs()->font());
+    mTextLayout->setColor(mAxis->labelConfigs()->color());
+    connect(mAxis->labelConfigs(), &LabelConfigs::colorChanged, mTextLayout, &TextLayout::setColor);
+    connect(mAxis->labelConfigs(), &LabelConfigs::fontChanged, mTextLayout, &TextLayout::setFont);
 }
 
 QQmlListProperty<PolarArea> PolarAreaChart::areas()
@@ -86,6 +89,16 @@ PolarArea *PolarAreaChart::areaAt(QQmlListProperty<PolarArea> *areasList, int in
 {
     PolarAreaChart *chart = qobject_cast<PolarAreaChart *>(areasList->object);
     return chart ? chart->mAreasList.at(index) : nullptr;
+}
+
+void PolarAreaChart::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+{
+    if (newGeometry != oldGeometry)
+    {
+        mTextLayout->setHeight(newGeometry.height());
+        mTextLayout->setWidth(newGeometry.width());
+    }
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
 }
 
 void PolarAreaChart::updateAngles()

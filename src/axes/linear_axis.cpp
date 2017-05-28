@@ -22,9 +22,10 @@ int LinearAxis::gridLinesCount() const
 
 double LinearAxis::gridLinePosition(int i) const
 {
-    return mGridLinesStep * (i + 1);
+    return map(mGridLinesValueStep * (i + 1));
 }
 
+#include <QDebug>
 void LinearAxis::updateGridParams()
 {
     double labelHeight = 20; // TODO: get from font conf
@@ -60,10 +61,10 @@ void LinearAxis::updateGridParams()
     {
         mGridLinesCount = numberOfSteps;
         mGridLinesValueStep = valueStep;
-        mGridLinesStep = map(valueStep);
 
         populateLabels();
     }
+    qDebug() << mGridLinesCount;
 }
 
 void LinearAxis::populateLabels()

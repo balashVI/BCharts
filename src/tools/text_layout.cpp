@@ -1,4 +1,4 @@
-#include "textlayout.h"
+#include "text_layout.h"
 
 #include <QPainter>
 
@@ -33,15 +33,42 @@ void TextLayout::add(QString text, QPointF position)
 
 void TextLayout::setFont(const QFont &font)
 {
-    mFont = font;
+    if (font != mFont)
+    {
+        mFont = font;
 
-    QFontMetrics metrics(mFont);
-    mLabelHeight = metrics.height();
+        QFontMetrics metrics(mFont);
+        mLabelHeight = metrics.height();
+
+        for (TextItem &i : mTextItems)
+        {
+            double width = metrics.width(i.text);
+
+            QPointF center = i.rect.center();
+            i.rect.setX(center.x() - 0.5 * width);
+            i.rect.setY(center.y() - 0.5 * mLabelHeight);
+            i.rect.setWidth(width);
+            i.rect.setHeight(mLabelHeight);
+        }
+
+        update();
+    }
+}
+
+void TextLayout::setColor(QColor color)
+{
+    if (color != mColor)
+    {
+        mColor = color;
+
+        update();
+    }
 }
 
 void TextLayout::paint(QPainter *painter)
 {
     painter->setFont(mFont);
+    painter->setPen(mColor);
     for (TextItem &item : mTextItems)
     {
         painter->drawText(item.rect, Qt::AlignCenter, item.text);

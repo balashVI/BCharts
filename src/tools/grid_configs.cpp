@@ -4,7 +4,7 @@ GridConfigs::GridConfigs(QObject *parent)
     : QObject(parent),
       pVisible{true},
       pLineWidth{2},
-      pColor{QColor(240, 240, 240, 200)}
+      pColor{"gray"}
 {
 }
 

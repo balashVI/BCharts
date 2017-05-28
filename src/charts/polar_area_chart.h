@@ -54,6 +54,7 @@ protected:
     static void appendArea(QQmlListProperty<PolarArea> *areasList, PolarArea *area);
     static int areasListLength(QQmlListProperty<PolarArea> *areasList);
     static PolarArea *areaAt(QQmlListProperty<PolarArea> *areasList, int index);
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
 
 private slots:
     void updateAngles();

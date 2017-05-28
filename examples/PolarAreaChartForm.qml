@@ -3,7 +3,6 @@ import BVI.Charts 2.0
 import QtQuick.Layouts 1.1
 
 Rectangle {
-    color: "#454754"
 
     RowLayout{
         anchors.fill: parent
@@ -14,28 +13,23 @@ Rectangle {
 
             PolarArea{
                 name: "First"
-                color: "#9688f7"
-                value: 1
+                color: "#FF9966"
+                value: 10
             }
             PolarArea{
                 name: "Second"
-                color: "#57dce5"
-                value: 2
+                color: "#66CCFF"
+                value: 20
             }
             PolarArea{
                 name: "Third"
-                color: "#b659b4"
-                value: 3
+                color: "#3C895B"
+                value: 15
             }
             PolarArea{
                 name: "Fourth"
-                color: "#3bbcfc"
-                value: 4
-            }
-            PolarArea{
-                name: "Fifth"
-                color: "#6597a2"
-                value: 5
+                color: "#7575A3"
+                value: 25
             }
         }
         ChartLegend{
