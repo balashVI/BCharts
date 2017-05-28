@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.1
 import BVI.Charts 2.0
 
 Rectangle {
-    color: "#454754"
 
     RowLayout{
         anchors.fill: parent
@@ -15,28 +14,23 @@ Rectangle {
 
             PieSlice{
                 name: "First"
-                color: "#9688f7"
-                value: 2
+                color: "#FF9966"
+                value: 10
             }
             PieSlice{
                 name: "Second"
-                color: "#57dce5"
-                value: 1.2
+                color: "#66CCFF"
+                value: 20
             }
             PieSlice{
                 name: "Third"
-                color: "#b659b4"
-                value: 1.5
+                color: "#3C895B"
+                value: 15
             }
             PieSlice{
                 name: "Fourth"
-                color: "#3bbcfc"
-                value: 3
-            }
-            PieSlice{
-                name: "Fifth"
-                color: "#6597a2"
-                value: 1
+                color: "#7575A3"
+                value: 25
             }
         }
 

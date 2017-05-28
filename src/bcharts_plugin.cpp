@@ -2,8 +2,16 @@
 
 #include <qqml.h>
 
+#include "axes/base_axis.h"
+
+#include "charts/polar_area_chart.h"
 #include "charts/pie_chart.h"
+
+#include "series/polar_area.h"
 #include "series/pie_slice.h"
+
+#include "tools/label_configs.h"
+#include "tools/grid_configs.h"
 #include "tools/stroke.h"
 
 #include "barchart.h"
@@ -24,10 +32,17 @@
 void BChartsPlugin::registerTypes(const char *uri)
 {
     // @uri com.balash.bcharts
-    qmlRegisterType<PieChart>(uri, 2, 0, "PieChart");
-    qmlRegisterType<PieSlice>(uri, 2, 0, "PieSlice");
+    qmlRegisterUncreatableType<BaseAxis>(uri, 2, 0, "BaseAxis", "");
 
-    qmlRegisterUncreatableType<Stroke>(uri, 2, 0,"Stroke", "");
+    qmlRegisterType<PieChart>(uri, 2, 0, "PieChart");
+    qmlRegisterType<PolarAreaChart>(uri, 2, 0, "PolarAreaChart");
+
+    qmlRegisterType<PieSlice>(uri, 2, 0, "PieSlice");
+    qmlRegisterType<PolarArea>(uri, 2, 0, "PolarArea");
+
+    qmlRegisterUncreatableType<Stroke>(uri, 2, 0, "Stroke", "");
+    qmlRegisterUncreatableType<LabelConfigs>(uri, 2, 0, "LabelConfigs", "");
+    qmlRegisterUncreatableType<GridConfigs>(uri, 2, 0, "GridConfigs", "");
 
     qmlRegisterType<Bubble>(uri, 1, 0, "Bubble");
     qmlRegisterType<BubbleSeries>(uri, 1, 0, "BubbleSeries");
@@ -46,4 +61,3 @@ void BChartsPlugin::registerTypes(const char *uri)
     qmlRegisterType<StandartAxis>(uri, 1, 0, "StandartAxis");
     qmlRegisterType<ChartPen>(uri, 1, 0, "ChartPen");
 }
-

@@ -1,9 +1,8 @@
 import QtQuick 2.4
-import BVI.Charts 1.0
+import BVI.Charts 2.0
 import QtQuick.Layouts 1.1
 
 Rectangle {
-    color: "white"
 
     RowLayout{
         anchors.fill: parent
@@ -11,21 +10,27 @@ Rectangle {
             id: polarAreaChart
             Layout.fillHeight: true
             Layout.fillWidth: true
-            polarAreas: [
-                PolarArea{
-                    color: "#D47E6A"
-                    value: 20
-                },PolarArea{
-                    color: "#66CCFF"
-                    value: 5
-                },PolarArea{
-                    color: "#7A4A8D"
-                    value: 18
-                },PolarArea{
-                    color: "#4C996B"
-                    value: 25
-                }
-            ]
+
+            PolarArea{
+                name: "First"
+                color: "#FF9966"
+                value: 10
+            }
+            PolarArea{
+                name: "Second"
+                color: "#66CCFF"
+                value: 20
+            }
+            PolarArea{
+                name: "Third"
+                color: "#3C895B"
+                value: 15
+            }
+            PolarArea{
+                name: "Fourth"
+                color: "#7575A3"
+                value: 25
+            }
         }
         ChartLegend{
             Layout.fillHeight: true

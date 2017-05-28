@@ -7,13 +7,6 @@ Item {
 
     property QtObject source
 
-    Rectangle{
-        anchors.fill: parent
-        color: "white"
-        radius: 5
-        opacity: 0.1
-    }
-
     ListView{
         id: list
         anchors.fill: parent
@@ -42,7 +35,6 @@ Item {
                 anchors.left: ico.right
                 anchors.margins: 5
                 renderType: Text.NativeRendering
-                color: "white"
                 font.pointSize: 10
             }
         }
@@ -54,6 +46,8 @@ Item {
 
     Component.onCompleted: {
         if(source)
+        {
             list.model = source.generateLegend()
+        }
     }
 }

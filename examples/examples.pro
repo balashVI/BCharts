@@ -26,7 +26,20 @@ SOURCES += main.cpp \
     ../src/standartaxis.cpp \
     ../src/xychart.cpp \
     ../src/xyseries.cpp \
-    ../src/series/base_series.cpp
+    ../src/series/base_series.cpp \
+    ../src/charts/polar_area_chart.cpp \
+    ../src/series/polar_area.cpp \
+    ../src/axes/base_axis.cpp \
+    ../src/axes/linear_axis.cpp \
+    ../src/grids/polar_grid.cpp \
+    ../src/grids/base_grid.cpp \
+    ../src/tools/label_configs.cpp \
+    ../src/tools/calc.cpp \
+    ../src/nodes/qsg_circle_node.cpp \
+    ../src/nodes/qsg_smooth_color_material.cpp \
+    ../src/nodes/qsg_smooth_color_material_shader.cpp \
+    ../src/tools/grid_configs.cpp \
+    ../src/tools/text_layout.cpp
 
 RESOURCES += qml.qrc
 
@@ -75,4 +88,28 @@ HEADERS += \
     ../src/standartaxis.h \
     ../src/xychart.h \
     ../src/xyseries.h \
-    ../src/series/base_series.h
+    ../src/series/base_series.h \
+    ../src/charts/polar_area_chart.h \
+    ../src/series/polar_area.h \
+    ../src/axes/base_axis.h \
+    ../src/axes/linear_axis.h \
+    ../src/grids/polar_grid.h \
+    ../src/grids/base_grid.h \
+    ../src/tools/label_configs.h \
+    ../src/tools/calc.h \
+    ../src/nodes/qsg_circle_node.h \
+    ../src/nodes/qsg_smooth_color_material.h \
+    ../src/nodes/qsg_smooth_color_material_shader.h \
+    ../src/tools/grid_configs.h \
+    ../src/tools/text_layout.h
+
+DISTFILES += \
+    AllChartsForm.qml \
+    BarChartForm.qml \
+    BubbleChartForm.qml \
+    ChartLegend.qml \
+    LineChartForm.qml \
+    main.qml \
+    PieChartForm.qml \
+    PolarAreaChartForm.qml \
+    XYChartForm.qml

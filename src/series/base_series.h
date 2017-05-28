@@ -2,8 +2,9 @@
 #define BASESERIES_H
 
 #include <QObject>
-#include <QSGNode>
 #include <QColor>
+
+class QSGNode;
 
 class BaseSeries : public QObject
 {
@@ -15,7 +16,7 @@ class BaseSeries : public QObject
 public:
     explicit BaseSeries(QObject *parent = 0);
 
-    virtual QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect, bool force = false) = 0;
+    virtual QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect) = 0;
 
     QColor color() const;
     void setColor(const QColor &value);
@@ -26,8 +27,6 @@ public:
 protected:
     QString pName;
     QColor pColor;
-
-    bool mNeedMaterialUpdate;
 
 signals:
     void nameChanged();

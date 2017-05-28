@@ -1,8 +1,9 @@
 #ifndef PIE_CHART_H
 #define PIE_CHART_H
 
-#include "../series/pie_slice.h"
 #include "base_chart.h"
+
+class PieSlice;
 
 ///
 /// \code
@@ -41,19 +42,21 @@ public:
 
     QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) override;
 
+signals:
+    void slicesChanged();
+    void angleOffsetChanged();
+
 protected:
     static void appendSlice(QQmlListProperty<PieSlice> *slicesList, PieSlice *slice);
     static int slicesListLength(QQmlListProperty<PieSlice> *slicesList);
     static PieSlice *sliceAt(QQmlListProperty<PieSlice> *slicesList, int index);
+
+protected:
     QList<PieSlice *> slicesList;
 
 private:
     double pAngleOffset;
     double sumSliceValue;
-
-signals:
-    void slicesChanged();
-    void angleOffsetChanged();
 
 public slots:
     void calculateDataRange();

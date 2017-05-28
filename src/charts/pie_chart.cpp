@@ -1,10 +1,13 @@
 #include <QPainter>
 
+#include <QSGNode>
+
+#include "../series/pie_slice.h"
 #include "pie_chart.h"
 
-PieChart::PieChart(QQuickItem *parent) :
-    BaseChart(parent),
-    pAngleOffset{0}
+PieChart::PieChart(QQuickItem *parent)
+    : BaseChart(parent),
+      pAngleOffset{0}
 {
     setFlag(ItemHasContents, true);
 }
@@ -14,7 +17,6 @@ QQmlListProperty<PieSlice> PieChart::slices()
     return QQmlListProperty<PieSlice>(this, 0, &PieChart::appendSlice, &PieChart::slicesListLength,
                                       &PieChart::sliceAt, 0);
 }
-
 
 double PieChart::angleOffset() const
 {
@@ -32,7 +34,7 @@ QVariantList PieChart::generateLegend()
 {
     QVariantList list;
     QVariantMap map;
-    for(PieSlice *slice: slicesList)
+    for (PieSlice *slice : slicesList)
     {
         map.clear();
         map.insert("name", slice->name());
@@ -45,7 +47,8 @@ QVariantList PieChart::generateLegend()
 void PieChart::appendSlice(QQmlListProperty<PieSlice> *slicesList, PieSlice *slice)
 {
     PieChart *chart = qobject_cast<PieChart *>(slicesList->object);
-    if (chart) {
+    if (chart)
+    {
         slice->setParent(chart);
         chart->slicesList.append(slice);
 
@@ -62,15 +65,16 @@ void PieChart::appendSlice(QQmlListProperty<PieSlice> *slicesList, PieSlice *sli
 int PieChart::slicesListLength(QQmlListProperty<PieSlice> *slicesList)
 {
     PieChart *chart = qobject_cast<PieChart *>(slicesList->object);
-    if(chart)
+    if (chart)
         return chart->slicesList.length();
-    else return 0;
+    else
+        return 0;
 }
 
 PieSlice *PieChart::sliceAt(QQmlListProperty<PieSlice> *slicesList, int index)
 {
     PieChart *chart = qobject_cast<PieChart *>(slicesList->object);
-    if(chart)
+    if (chart)
         return chart->slicesList.at(index);
     return nullptr;
 }
@@ -78,16 +82,16 @@ PieSlice *PieChart::sliceAt(QQmlListProperty<PieSlice> *slicesList, int index)
 void PieChart::calculateDataRange()
 {
     double sumValue = 0;
-    for(PieSlice* i:slicesList)
+    for (PieSlice *i : slicesList)
     {
         sumValue += i->value();
     }
 
     double startAngle = 0;
     double endAngle;
-    for(PieSlice* i:slicesList)
+    for (PieSlice *i : slicesList)
     {
-        endAngle = startAngle + i->value()/sumValue*M_PI*2;
+        endAngle = startAngle + i->value() / sumValue * M_PI * 2;
         i->setStartAngle(startAngle);
         i->setEndAngle(endAngle);
         startAngle = endAngle;
@@ -112,7 +116,7 @@ QSGNode *PieChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 
     // transform
     QMatrix4x4 m;
-    m.translate(b.width()/2,b.height()/2,1);
+    m.translate(b.width() / 2, b.height() / 2, 1);
     double scale = qMin(b.width(), b.height()) / 2;
     m.scale(scale, scale, 1);
     tNode->setMatrix(m);
@@ -131,15 +135,15 @@ QSGNode *PieChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 
     // update child nodes
     // TODO: improve iterating
-    for (int i=0; i!=slicesList.length(); ++i)
+    for (int i = 0; i != slicesList.length(); ++i)
     {
         if (i < oldChildsCount)
         {
-            slicesList.at(i)->updatePaintNode(tNode->childAtIndex(i), b, mForceUpdate);
+            slicesList.at(i)->updatePaintNode(tNode->childAtIndex(i), b);
         }
         else
         {
-            tNode->appendChildNode(slicesList.at(i)->updatePaintNode(nullptr, b, true));
+            tNode->appendChildNode(slicesList.at(i)->updatePaintNode(nullptr, b));
         }
     }
 

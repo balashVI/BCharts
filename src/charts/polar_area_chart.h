@@ -1,38 +1,41 @@
-#ifndef PIECHART_H
-#define PIECHART_H
+#ifndef POLAR_AREA_CHART_H
+#define POLAR_AREA_CHART_H
 
-#include "../series/pieslice.h"
-#include "basechart.h"
+#include "base_chart.h"
+
+class TextLayout;
+class PolarArea;
+class PolarGrid;
+class BaseAxis;
 
 ///
 /// \code
 /// ...
-/// PieChart{
+/// PolarAreaChart{
 ///     anchors.fill: parent
-///     series: [
-///         PieSeries{
-///         },
-///         PieSeries{
-///         }
-///     ]
+///
+///     PolarArea{
+///     }
+///     PolarArea{
+///     }
 /// }
 /// ...
 /// \endcode
 ///
-class PieChart : public BaseChart
+class PolarAreaChart : public BaseChart
 {
     Q_OBJECT
 
-    Q_CLASSINFO("DefaultProperty", "slices")
+    Q_CLASSINFO("DefaultProperty", "areas")
 
-    Q_PROPERTY(QQmlListProperty<PieSlice> slices READ slices NOTIFY slicesChanged())
+    Q_PROPERTY(QQmlListProperty<PolarArea> areas READ areas NOTIFY areasChanged())
     Q_PROPERTY(double angleOffset READ angleOffset WRITE setAngleOffset NOTIFY angleOffsetChanged)
+    Q_PROPERTY(BaseAxis *axis READ axis)
 
 public:
-    explicit PieChart(QQuickItem *parent = 0);
+    explicit PolarAreaChart(QQuickItem *parent = 0);
 
-
-    QQmlListProperty<PieSlice> slices();
+    QQmlListProperty<PolarArea> areas();
 
     double angleOffset() const;
     void setAngleOffset(double value);
@@ -41,23 +44,29 @@ public:
 
     QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) override;
 
-protected:
-    static void appendSlice(QQmlListProperty<PieSlice> *slicesList, PieSlice *slice);
-    static int slicesListLength(QQmlListProperty<PieSlice> *slicesList);
-    static PieSlice *sliceAt(QQmlListProperty<PieSlice> *slicesList, int index);
-    QList<PieSlice *> slicesList;
-
-private:
-    double pAngleOffset;
-    double sumSliceValue;
+    BaseAxis *axis() const;
 
 signals:
-    void slicesChanged();
+    void areasChanged();
     void angleOffsetChanged();
 
-public slots:
-    void calculateDataRange();
+protected:
+    static void appendArea(QQmlListProperty<PolarArea> *areasList, PolarArea *area);
+    static int areasListLength(QQmlListProperty<PolarArea> *areasList);
+    static PolarArea *areaAt(QQmlListProperty<PolarArea> *areasList, int index);
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
+
+private slots:
+    void updateAngles();
+    void updateDataRange();
+
+private:
+    QList<PolarArea *> mAreasList;
+    BaseAxis *mAxis;
+    TextLayout *mTextLayout;
+    PolarGrid *mGrid;
+    double mAngleOffset;
 
 };
 
-#endif // PIECHART_H
+#endif // POLAR_AREA_CHART_H

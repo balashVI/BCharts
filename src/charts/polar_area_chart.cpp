@@ -1,148 +1,188 @@
-#include "piechart.h"
-#include <QPainter>
+#include "polar_area_chart.h"
 
-PieChart::PieChart(QQuickItem *parent) :
-    BaseChart(parent),
-    pAngleOffset{0}
+#include <QSGNode>
+
+#include "../tools/label_configs.h"
+#include "../tools/text_layout.h"
+#include "../series/polar_area.h"
+#include "../axes/linear_axis.h"
+#include "../grids/polar_grid.h"
+
+PolarAreaChart::PolarAreaChart(QQuickItem *parent)
+    : BaseChart(parent),
+      mAxis{new LinearAxis(this)},
+      mTextLayout{new TextLayout(this)},
+      mGrid{new PolarGrid(mAxis, mTextLayout, this)},
+      mAngleOffset{0}
 {
+    mGrid->setAxis(mAxis);
     setFlag(ItemHasContents, true);
+
+    mTextLayout->setFont(mAxis->labelConfigs()->font());
+    mTextLayout->setColor(mAxis->labelConfigs()->color());
+    connect(mAxis->labelConfigs(), &LabelConfigs::colorChanged, mTextLayout, &TextLayout::setColor);
+    connect(mAxis->labelConfigs(), &LabelConfigs::fontChanged, mTextLayout, &TextLayout::setFont);
 }
 
-QQmlListProperty<PieSlice> PieChart::slices()
+QQmlListProperty<PolarArea> PolarAreaChart::areas()
 {
-    return QQmlListProperty<PieSlice>(this, 0, &PieChart::appendSlice, &PieChart::slicesListLength,
-                                      &PieChart::sliceAt, 0);
+    return QQmlListProperty<PolarArea>(this, 0,
+                                       &PolarAreaChart::appendArea,
+                                       &PolarAreaChart::areasListLength,
+                                       &PolarAreaChart::areaAt, 0);
 }
 
-
-double PieChart::angleOffset() const
+double PolarAreaChart::angleOffset() const
 {
-    return pAngleOffset;
+    return mAngleOffset;
 }
 
-void PieChart::setAngleOffset(double value)
+void PolarAreaChart::setAngleOffset(double value)
 {
-    pAngleOffset = value;
+    mAngleOffset = value;
     emit angleOffsetChanged();
     update();
 }
 
-QVariantList PieChart::generateLegend()
+QVariantList PolarAreaChart::generateLegend()
 {
     QVariantList list;
     QVariantMap map;
-    for(PieSlice *slice: slicesList)
+    for (PolarArea *area : mAreasList)
     {
         map.clear();
-        map.insert("name", slice->name());
-        map.insert("color", slice->color());
+        map.insert("name", area->name());
+        map.insert("color", area->color());
         list.append(map);
     }
     return list;
 }
 
-void PieChart::appendSlice(QQmlListProperty<PieSlice> *slicesList, PieSlice *slice)
+void PolarAreaChart::appendArea(QQmlListProperty<PolarArea> *areasList, PolarArea *area)
 {
-    PieChart *chart = qobject_cast<PieChart *>(slicesList->object);
-    if (chart) {
-        slice->setParent(chart);
-        chart->slicesList.append(slice);
+    PolarAreaChart *chart = qobject_cast<PolarAreaChart *>(areasList->object);
+    if (chart)
+    {
+        area->setParent(chart);
+        area->setAxis(chart->mAxis);
+        chart->mAreasList.append(area);
 
-        connect(slice, &PieSlice::needsUpdate, chart, &PieChart::update);
-        connect(slice, &PieSlice::valueChanged, chart, &PieChart::calculateDataRange);
-        chart->calculateDataRange();
+        connect(area, &PolarArea::needsUpdate, chart, &PolarAreaChart::update);
+        connect(area, &PolarArea::valueChanged, chart, &PolarAreaChart::updateDataRange);
+
+        chart->updateAngles();
+        chart->updateDataRange();
 
         chart->mForceUpdate = true;
 
-        emit chart->slicesChanged();
+        emit chart->areasChanged();
     }
 }
 
-int PieChart::slicesListLength(QQmlListProperty<PieSlice> *slicesList)
+int PolarAreaChart::areasListLength(QQmlListProperty<PolarArea> *areasList)
 {
-    PieChart *chart = qobject_cast<PieChart *>(slicesList->object);
-    if(chart)
-        return chart->slicesList.length();
-    else return 0;
+    PolarAreaChart *chart = qobject_cast<PolarAreaChart *>(areasList->object);
+    return chart ? chart->mAreasList.length() : 0;
 }
 
-PieSlice *PieChart::sliceAt(QQmlListProperty<PieSlice> *slicesList, int index)
+PolarArea *PolarAreaChart::areaAt(QQmlListProperty<PolarArea> *areasList, int index)
 {
-    PieChart *chart = qobject_cast<PieChart *>(slicesList->object);
-    if(chart)
-        return chart->slicesList.at(index);
-    return nullptr;
+    PolarAreaChart *chart = qobject_cast<PolarAreaChart *>(areasList->object);
+    return chart ? chart->mAreasList.at(index) : nullptr;
 }
 
-void PieChart::calculateDataRange()
+void PolarAreaChart::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    double sumValue = 0;
-    for(PieSlice* i:slicesList)
+    if (newGeometry != oldGeometry)
     {
-        sumValue += i->value();
+        mTextLayout->setHeight(newGeometry.height());
+        mTextLayout->setWidth(newGeometry.width());
     }
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+}
 
-    double startAngle = 0;
-    double endAngle;
-    for(PieSlice* i:slicesList)
+void PolarAreaChart::updateAngles()
+{
+    auto step = M_PI * 2 / mAreasList.count();
+
+    for (int i = 0; i != mAreasList.count(); ++i)
     {
-        endAngle = startAngle + i->value()/sumValue*M_PI*2;
-        i->setStartAngle(startAngle);
-        i->setEndAngle(endAngle);
-        startAngle = endAngle;
+        mAreasList[i]->setStartAngle(i * step);
+        mAreasList[i]->setEndAngle((i + 1) * step);
     }
 }
 
-QSGNode *PieChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
+void PolarAreaChart::updateDataRange()
+{
+    double max = std::numeric_limits<double>::min();
+
+    for (auto i : mAreasList)
+    {
+        if (i->value() > max)
+        {
+            max = i->value();
+        }
+    }
+
+    mAxis->setMax(max);
+}
+
+QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
     auto b = boundingRect();
+    mAxis->setSize(std::min(b.width(), b.height()) * 0.5);
 
-    QSGTransformNode *tNode = 0;
-
+    QSGNode *node = 0;
     if (!oldNode)
     {
-        tNode = new QSGTransformNode;
-        tNode->setFlag(QSGNode::OwnsGeometry);
+        node = new QSGTransformNode;
     }
     else
     {
-        tNode = static_cast<QSGTransformNode *>(oldNode);
+        node = static_cast<QSGTransformNode *>(oldNode);
     }
 
-    // transform
-    QMatrix4x4 m;
-    m.translate(b.width()/2,b.height()/2,1);
-    double scale = qMin(b.width(), b.height()) / 2;
-    m.scale(scale, scale, 1);
-    tNode->setMatrix(m);
-    tNode->markDirty(QSGNode::DirtyMatrix);
+    // update grid
+    int oldChildsCount = node->childCount();
+    if (oldChildsCount == 0)
+    {
+        node->appendChildNode(mGrid->updatePaintNode(nullptr, b, mForceUpdate));
+    }
+    else
+    {
+        mGrid->updatePaintNode(node->childAtIndex(0), b, mForceUpdate);
+    }
 
     // delete redundand child nodes
-    int oldChildsCount = tNode->childCount();
-    while (oldChildsCount > slicesList.count())
+    while (oldChildsCount >= mAreasList.count())
     {
-        auto n = tNode->childAtIndex(0);
-        tNode->removeChildNode(n);
+        auto n = node->childAtIndex(1);
+        node->removeChildNode(n);
         delete n;
 
         --oldChildsCount;
     }
 
-    // update child nodes
+    // update polar areas
     // TODO: improve iterating
-    for (int i=0; i!=slicesList.length(); ++i)
+    for (int i = 0; i != mAreasList.length(); ++i)
     {
-        if (i < oldChildsCount)
+        if (i + 1 < oldChildsCount)
         {
-            slicesList.at(i)->updatePaintNode(tNode->childAtIndex(i), b, mForceUpdate);
+            mAreasList.at(i)->updatePaintNode(node->childAtIndex(i + 1), b);
         }
         else
         {
-            tNode->appendChildNode(slicesList.at(i)->updatePaintNode(nullptr, b, true));
+            node->appendChildNode(mAreasList.at(i)->updatePaintNode(nullptr, b));
         }
     }
 
     mForceUpdate = false;
 
-    return tNode;
+    return node;
+}
+
+BaseAxis *PolarAreaChart::axis() const
+{
+    return mAxis;
 }

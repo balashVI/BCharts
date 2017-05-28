@@ -1,18 +1,17 @@
 #include "base_series.h"
 
-BaseSeries::BaseSeries(QObject *parent) :
-    QObject(parent),
-    pName{"Series"},
-    pColor{"gray"},
-    mNeedMaterialUpdate{true}
+BaseSeries::BaseSeries(QObject *parent)
+    : QObject(parent),
+      pName{"Series"},
+      pColor{"gray"}
 {
 }
 
 void BaseSeries::setColor(const QColor &value)
 {
-    if (value != pColor) {
+    if (value != pColor)
+    {
         pColor = value;
-        mNeedMaterialUpdate = true;
         emit colorChanged();
     }
 }
@@ -29,6 +28,6 @@ QString BaseSeries::name() const
 
 void BaseSeries::setName(const QString &value)
 {
-    pName=value;
+    pName = value;
     emit nameChanged();
 }

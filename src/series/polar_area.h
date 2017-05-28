@@ -1,11 +1,12 @@
-#ifndef PIE_SLICE_H
-#define PIE_SLICE_H
+#ifndef POLAR_AREA_H
+#define POLAR_AREA_H
 
 #include "base_series.h"
 
+class BaseAxis;
 class Stroke;
 
-class PieSlice : public BaseSeries
+class PolarArea : public BaseSeries
 {
     Q_OBJECT
 
@@ -13,7 +14,7 @@ class PieSlice : public BaseSeries
     Q_PROPERTY(Stroke *stroke READ stroke)
 
 public:
-    explicit PieSlice(QObject *parent = 0);
+    explicit PolarArea(QObject *parent = 0);
 
     QSGNode *updatePaintNode(QSGNode *oldNode, QRectF boundingRect) override;
 
@@ -25,20 +26,20 @@ public:
 
     Stroke *stroke() const;
 
+    void setAxis(BaseAxis *axis);
+
 signals:
     void valueChanged();
-
-protected:
-    int vertexCount(QRectF r);
 
 protected:
     double pValue;
     Stroke *pStroke;
     double mStartAngle, mEndAngle;
 
-    bool mNeedGeometryUpdate;
-    double mScaleAtLastGUpdate;
+    BaseAxis *mAxis;
 
+private:
+    int vertexCount(QRectF r);
 };
 
-#endif // PIE_SLICE_H
+#endif // POLAR_AREA_H
