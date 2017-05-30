@@ -13,6 +13,7 @@ Rectangle {
             Layout.fillWidth: true
             series: [
                 XYSeries {
+                    name: "First"
                     id: chartSeries
                     data: [
                         ChartPoint {
@@ -40,6 +41,7 @@ Rectangle {
                     strokePen.color: "#5C5C8A"
                 },
                 XYSeries {
+                    name: "Second"
                     data: [
                         ChartPoint {
                             x: 5

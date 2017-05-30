@@ -12,6 +12,7 @@ Rectangle {
             maxBubbleRadius: 30
             series: [
                 BubbleSeries {
+                    name: "First"
                     data: [
                         Bubble {
                             x: 0
@@ -43,6 +44,7 @@ Rectangle {
                     strokePen.color: "#5C5C8A"
                 },
                 BubbleSeries {
+                    name: "Second"
                     data: [
                         Bubble {
                             x: 0

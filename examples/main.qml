@@ -3,7 +3,7 @@ import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 
 ApplicationWindow {
-    title: qsTr("BVIChart example")
+    title: qsTr("BCharts example")
     width: 1040
     height: 680
     visible: true
