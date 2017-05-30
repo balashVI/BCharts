@@ -154,7 +154,7 @@ QSGNode *PolarAreaChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     }
 
     // delete redundand child nodes
-    while (oldChildsCount >= mAreasList.count())
+    while (oldChildsCount - 1 > mAreasList.count())
     {
         auto n = node->childAtIndex(1);
         node->removeChildNode(n);

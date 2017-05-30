@@ -9,7 +9,6 @@
 #include "../tools/grid_configs.h"
 #include "../tools/text_layout.h"
 #include "../axes/base_axis.h"
-#include "../tools/calc.h"
 
 PolarGrid::PolarGrid(BaseAxis *axis, TextLayout *textLayer, QObject *parent)
     : BaseGrid(axis, textLayer, parent)
@@ -53,7 +52,6 @@ QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool 
     for (int i = 0; i < linesCount; ++i)
     {
         double radius = mAxis->gridLinePosition(i);
-        int vertexCount = Calc::vertexContInCircleSegment(radius, 0, M_PI * 2);
 
         QSGCircleNode *circleNode = 0;
 
@@ -67,7 +65,7 @@ QSGNode *PolarGrid::updateGridLines(QSGNode *oldNode, QRectF boundingRect, bool 
             node->appendChildNode(circleNode);
         }
 
-        circleNode->update(center, radius, mAxis->gridConfigs()->lineWidth(), vertexCount, mAxis->gridConfigs()->color(), true);
+        circleNode->update(center, radius, mAxis->gridConfigs()->lineWidth(), mAxis->gridConfigs()->color(), true);
 
         // update labels
         if (mAxis->labelConfigs()->visible())

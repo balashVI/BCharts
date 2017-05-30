@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "qsg_smooth_color_material.h"
+#include "../tools/calc.h"
 
 QSGCircleNode::QSGCircleNode()
     : mGeometry(new QSGGeometry(QSGSmoothColorMaterial::attributeSet(), 0, 0, QSGGeometry::UnsignedIntType)),
@@ -17,8 +18,10 @@ QSGCircleNode::QSGCircleNode()
     setFlag(QSGNode::OwnsMaterial);
 }
 
-void QSGCircleNode::update(QPointF center, float radius, int lineWidth, int segmentsCount, QColor color, bool antialiasing)
+void QSGCircleNode::update(QPointF center, float radius, int lineWidth, QColor color, bool antialiasing)
 {
+    int segmentsCount = Calc::vertexContInCircleSegment(radius, 0, 2 * M_PI);
+
     int verticesCount = 2 * segmentsCount;
     int indexesCount = 2 * segmentsCount + 2;
     if (antialiasing)
