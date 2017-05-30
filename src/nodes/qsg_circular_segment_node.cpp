@@ -7,8 +7,8 @@
 #include "../tools/calc.h"
 
 QSGCircularSegmentNode::QSGCircularSegmentNode()
-    : mGeometry(new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), 0, 0, QSGGeometry::UnsignedIntType)),
-      mMaterial(new QSGFlatColorMaterial)
+    : mGeometry(new QSGGeometry(QSGSmoothColorMaterial::attributeSet(), 0, 0, QSGGeometry::UnsignedIntType)),
+      mMaterial(new QSGSmoothColorMaterial)
 {
     mGeometry->setDrawingMode(QSGGeometry::DrawTriangleStrip);
     setGeometry(mGeometry);
@@ -20,27 +20,24 @@ QSGCircularSegmentNode::QSGCircularSegmentNode()
 
 void QSGCircularSegmentNode::update(QPointF center, float radius, float startAndgle, float endAngle, int lineWidth, QColor color, bool antialiasing)
 {
-    // update material
-    mMaterial->setColor(color);
-    markDirty(QSGNode::DirtyMaterial);
+    Color4ub fillColor = colorToColor4ub(color);
 
-    // update points
     int sCount = Calc::segmentContInCircleSegment(radius, startAndgle, endAngle);
     int vCount = 2 + sCount;
     int iCount = vCount + std::floor(sCount / 2.0);
 
     mGeometry->allocate(vCount, iCount);
-    QSGGeometry::Point2D *vertices = mGeometry->vertexDataAsPoint2D();
+    SmoothVertex *vertices = reinterpret_cast<SmoothVertex *>(mGeometry->vertexData());
 
     // VERTICES
-    vertices[0].set(center.x(), center.y());
+    vertices[0].set(center.x(), center.y(), fillColor, 0, 0);
     double step = (endAngle - startAndgle) / sCount;
     for (int i = 0; i < vCount; ++i)
     {
         double angle = startAndgle + step * i;
         double x = center.x() + radius * cos(angle);
         double y = center.y() + radius * sin(angle);
-        vertices[i + 1].set(x, y);
+        vertices[i + 1].set(x, y, fillColor, 0, 0);
     }
 
     // INDEXES

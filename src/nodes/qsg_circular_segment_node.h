@@ -4,7 +4,7 @@
 #include <QSGGeometryNode>
 #include <QColor>
 
-class QSGFlatColorMaterial;
+class QSGSmoothColorMaterial;
 class QSGGeometry;
 
 class QSGCircularSegmentNode : public QSGGeometryNode
@@ -16,7 +16,7 @@ public:
 
 private:
     QSGGeometry *mGeometry;
-    QSGFlatColorMaterial *mMaterial;
+    QSGSmoothColorMaterial *mMaterial;
 };
 
 #endif // QSG_CIRCULAR_SEGMENT_NODE_H
