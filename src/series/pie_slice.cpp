@@ -1,8 +1,6 @@
-#include <QSGFlatColorMaterial>
-#include <QSGGeometryNode>
-#include <QDebug>
 #include <cmath>
 
+#include "../nodes/qsg_circular_segment_node.h"
 #include "../tools/stroke.h"
 #include "pie_slice.h"
 
@@ -69,123 +67,18 @@ int PieSlice::vertexCount(QRectF r)
 
 QSGNode *PieSlice::updatePaintNode(QSGNode *oldNode, QRectF boundingRect)
 {
-    QSGGeometryNode *node = 0;
-    QSGGeometry *geometry = 0;
-    QSGGeometryNode *sNode = 0;
-    QSGGeometry *sGeometry = 0;
-
-    // init base node
-    if (!oldNode)
+    QSGCircularSegmentNode* node = 0;
+    if (oldNode)
     {
-        node = new QSGGeometryNode;
-        geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), vertexCount(boundingRect));
-        geometry->setLineWidth(1);
-        geometry->setDrawingMode(QSGGeometry::DrawTriangleFan);
-        node->setGeometry(geometry);
-        node->setFlag(QSGNode::OwnsGeometry);
-
-        QSGFlatColorMaterial *material = new QSGFlatColorMaterial;
-        node->setMaterial(material);
-        node->setFlag(QSGNode::OwnsMaterial);
+        node = static_cast<QSGCircularSegmentNode*>(oldNode);
     }
     else
     {
-        node = static_cast<QSGGeometryNode *>(oldNode);
-        geometry = node->geometry();
+        node = new QSGCircularSegmentNode;
     }
 
-    // init stroke node
-    if (stroke()->enable())
-    {
-        if (node->childCount())
-        {
-            sNode = static_cast<QSGGeometryNode *>(node->childAtIndex(0));
-            sGeometry = sNode->geometry();
-        }
-        else
-        {
-            sNode = new QSGGeometryNode;
-            sGeometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), vertexCount(boundingRect));
-            sGeometry->setLineWidth(stroke()->width());
-            sGeometry->setDrawingMode(QSGGeometry::DrawLineLoop);
-            sNode->setGeometry(sGeometry);
-            sNode->setFlag(QSGNode::OwnsGeometry);
-
-            auto *sMaterial = new QSGFlatColorMaterial;
-            sNode->setMaterial(sMaterial);
-            sNode->setFlag(QSGNode::OwnsMaterial);
-
-            node->appendChildNode(sNode);
-        }
-    }
-    else
-    {
-        if (node->childCount())
-        {
-            // delete stroke node if not needed more
-            auto sNode = node->childAtIndex(0);
-            node->removeChildNode(sNode);
-            delete sNode;
-        }
-    }
-
-    // update material
-    auto *material = static_cast<QSGFlatColorMaterial *>(node->material());
-    material->setColor(pColor);
-    node->markDirty(QSGNode::DirtyMaterial);
-
-    // update stroke material
-    if (stroke()->enable())
-    {
-        auto *material = static_cast<QSGFlatColorMaterial *>(sNode->material());
-        material->setColor(stroke()->color());
-        node->markDirty(QSGNode::DirtyMaterial);
-    }
-
-    // check if the neumber of segments needs to be updated
-    double scale = qMin(boundingRect.width(), boundingRect.height()) / 2;
-    if (scale < 0.75 * mScaleAtLastGUpdate || scale > 1.5 * mScaleAtLastGUpdate)
-    {
-
-        mScaleAtLastGUpdate = scale;
-        mNeedGeometryUpdate = true;
-    }
-
-    // update points
-    if (mNeedGeometryUpdate)
-    {
-        mNeedGeometryUpdate = false;
-
-        int vCount = vertexCount(boundingRect);
-        geometry->allocate(vCount);
-        QSGGeometry::Point2D *vertices = geometry->vertexDataAsPoint2D();
-
-        vertices[0].set(0, 0);
-
-        double step = (mEndAngle - mStartAngle) / (vCount - 2);
-        for (int i = 0; i < vCount - 1; ++i)
-        {
-            double angle = mStartAngle + step * i;
-            double x = cos(angle);
-            double y = sin(angle);
-            vertices[i + 1].set(x, y);
-        }
-
-        node->markDirty(QSGNode::DirtyGeometry);
-
-        // update stroke node
-        if (stroke()->enable())
-        {
-            sGeometry->setLineWidth(stroke()->width());
-            sGeometry->allocate(vCount);
-            auto sVertices = sGeometry->vertexDataAsPoint2D();
-            for (int i = 0; i != vCount; ++i)
-            {
-                sVertices[i] = vertices[i];
-            }
-            sNode->markDirty(QSGNode::DirtyGeometry);
-        }
-    }
+    double radius = std::min(boundingRect.width(), boundingRect.height())*0.5;
+    node->update(boundingRect.center(), radius, mStartAngle, mEndAngle, 0, color(), true);
 
     return node;
 }

@@ -1,7 +1,5 @@
 #include "../tools/stroke.h"
 
-#include <QSGFlatColorMaterial>
-#include <QSGNode>
 #include <cmath>
 
 #include "../nodes/qsg_circular_segment_node.h"
