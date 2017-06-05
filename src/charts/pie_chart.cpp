@@ -102,32 +102,14 @@ QSGNode *PieChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
     auto b = boundingRect();
 
-    QSGTransformNode *tNode = 0;
-
-    if (!oldNode)
-    {
-        tNode = new QSGTransformNode;
-        tNode->setFlag(QSGNode::OwnsGeometry);
-    }
-    else
-    {
-        tNode = static_cast<QSGTransformNode *>(oldNode);
-    }
-
-    // transform
-    QMatrix4x4 m;
-    m.translate(b.width() / 2, b.height() / 2, 1);
-    double scale = qMin(b.width(), b.height()) / 2;
-    m.scale(scale, scale, 1);
-    tNode->setMatrix(m);
-    tNode->markDirty(QSGNode::DirtyMatrix);
+    QSGNode *node = oldNode ? oldNode : new QSGNode;
 
     // delete redundand child nodes
-    int oldChildsCount = tNode->childCount();
+    int oldChildsCount = node->childCount();
     while (oldChildsCount > slicesList.count())
     {
-        auto n = tNode->childAtIndex(0);
-        tNode->removeChildNode(n);
+        auto n = node->childAtIndex(0);
+        node->removeChildNode(n);
         delete n;
 
         --oldChildsCount;
@@ -139,15 +121,13 @@ QSGNode *PieChart::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
     {
         if (i < oldChildsCount)
         {
-            slicesList.at(i)->updatePaintNode(tNode->childAtIndex(i), b);
+            slicesList.at(i)->updatePaintNode(node->childAtIndex(i), b);
         }
         else
         {
-            tNode->appendChildNode(slicesList.at(i)->updatePaintNode(nullptr, b));
+            node->appendChildNode(slicesList.at(i)->updatePaintNode(nullptr, b));
         }
     }
 
-    mForceUpdate = false;
-
-    return tNode;
+    return node;
 }

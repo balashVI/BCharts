@@ -1,9 +1,8 @@
 #include "../tools/stroke.h"
 
-#include <QSGFlatColorMaterial>
-#include <QSGNode>
 #include <cmath>
 
+#include "../nodes/qsg_circular_segment_node.h"
 #include "../axes/base_axis.h"
 #include "polar_area.h"
 
@@ -18,113 +17,18 @@ PolarArea::PolarArea(QObject *parent)
 
 QSGNode *PolarArea::updatePaintNode(QSGNode *oldNode, QRectF boundingRect)
 {
-    auto center = boundingRect.center();
-
-    QSGGeometryNode *node = 0;
-    QSGGeometry *geometry = 0;
-    QSGGeometryNode *sNode = 0;
-    QSGGeometry *sGeometry = 0;
-
-    // init base node
-    if (!oldNode)
+    QSGCircularSegmentNode* node = 0;
+    if (oldNode)
     {
-        node = new QSGGeometryNode;
-        geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), vertexCount(boundingRect));
-        geometry->setLineWidth(1);
-        geometry->setDrawingMode(QSGGeometry::DrawTriangleFan);
-        node->setGeometry(geometry);
-        node->setFlag(QSGNode::OwnsGeometry);
-
-        QSGFlatColorMaterial *material = new QSGFlatColorMaterial;
-        node->setMaterial(material);
-        node->setFlag(QSGNode::OwnsMaterial);
+        node = static_cast<QSGCircularSegmentNode*>(oldNode);
     }
     else
     {
-        node = static_cast<QSGGeometryNode *>(oldNode);
-        geometry = node->geometry();
+        node = new QSGCircularSegmentNode;
     }
 
-    // init stroke node
-    if (stroke()->enable())
-    {
-        if (node->childCount())
-        {
-            sNode = static_cast<QSGGeometryNode *>(node->childAtIndex(0));
-            sGeometry = sNode->geometry();
-        }
-        else
-        {
-            sNode = new QSGGeometryNode;
-            sGeometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), vertexCount(boundingRect));
-            sGeometry->setLineWidth(stroke()->width());
-            sGeometry->setDrawingMode(QSGGeometry::DrawLineLoop);
-            sNode->setGeometry(sGeometry);
-            sNode->setFlag(QSGNode::OwnsGeometry);
-
-            auto *sMaterial = new QSGFlatColorMaterial;
-            sNode->setMaterial(sMaterial);
-            sNode->setFlag(QSGNode::OwnsMaterial);
-
-            node->appendChildNode(sNode);
-        }
-    }
-    else
-    {
-        if (node->childCount())
-        {
-            // delete stroke node if not needed more
-            auto sNode = node->childAtIndex(0);
-            node->removeChildNode(sNode);
-            delete sNode;
-        }
-    }
-
-    // update material
-    auto *material = static_cast<QSGFlatColorMaterial *>(node->material());
-    material->setColor(pColor);
-    node->markDirty(QSGNode::DirtyMaterial);
-
-    // update stroke material
-    if (stroke()->enable())
-    {
-        auto *material = static_cast<QSGFlatColorMaterial *>(sNode->material());
-        material->setColor(stroke()->color());
-        node->markDirty(QSGNode::DirtyMaterial);
-    }
-
-    // update points
-    int vCount = vertexCount(boundingRect);
-    geometry->allocate(vCount);
-    QSGGeometry::Point2D *vertices = geometry->vertexDataAsPoint2D();
-
-    vertices[0].set(center.x(), center.y());
-
-    double step = (mEndAngle - mStartAngle) / (vCount - 2);
-    for (int i = 0; i < vCount - 1; ++i)
-    {
-        double angle = mStartAngle + step * i;
-        Q_ASSERT(mAxis);
-        double r = std::max(0.0, mAxis->map(value()));
-        double x = center.x() + r * cos(angle);
-        double y = center.y() + r * sin(angle);
-        vertices[i + 1].set(x, y);
-    }
-
-    node->markDirty(QSGNode::DirtyGeometry);
-
-    // update stroke node
-    if (stroke()->enable())
-    {
-        sGeometry->setLineWidth(stroke()->width());
-        sGeometry->allocate(vCount);
-        auto sVertices = sGeometry->vertexDataAsPoint2D();
-        for (int i = 0; i != vCount; ++i)
-        {
-            sVertices[i] = vertices[i];
-        }
-        sNode->markDirty(QSGNode::DirtyGeometry);
-    }
+    double radius = std::max(0.0, mAxis->map(value()));
+    node->update(boundingRect.center(), radius, mStartAngle, mEndAngle, 0, color(), true);
 
     return node;
 }

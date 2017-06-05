@@ -40,8 +40,8 @@ double PolarAreaChart::angleOffset() const
 void PolarAreaChart::setAngleOffset(double value)
 {
     mAngleOffset = value;
+    updateAngles();
     emit angleOffsetChanged();
-    update();
 }
 
 QVariantList PolarAreaChart::generateLegend()
@@ -107,8 +107,8 @@ void PolarAreaChart::updateAngles()
 
     for (int i = 0; i != mAreasList.count(); ++i)
     {
-        mAreasList[i]->setStartAngle(i * step);
-        mAreasList[i]->setEndAngle((i + 1) * step);
+        mAreasList[i]->setStartAngle(mAngleOffset + i * step);
+        mAreasList[i]->setEndAngle(mAngleOffset + (i + 1) * step);
     }
 }
 

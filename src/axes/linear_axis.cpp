@@ -1,7 +1,5 @@
 #include "linear_axis.h"
 
-#include <cmath>
-
 #include "../tools/label_configs.h"
 #include "../tools/calc.h"
 
